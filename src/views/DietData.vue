@@ -46,20 +46,24 @@
             <el-icon><Bowl /></el-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ todayMeals }}</div>
-            <div class="stat-label">今日用餐次数</div>
+            <div class="stat-value">{{ todayMealsTotal }}</div>
+            <div class="stat-label">今日三餐</div>
+            <div class="stat-detail">
+              早餐 {{ todayBreakfast }} | 午餐 {{ todayLunch }} | 晚餐
+              {{ todayDinner }}
+            </div>
           </div>
         </div>
       </el-card>
 
-      <el-card class="stat-card total-card">
+      <el-card class="stat-card snack-card">
         <div class="stat-content">
           <div class="stat-icon">
-            <el-icon><DataBoard /></el-icon>
+            <el-icon><Bowl /></el-icon>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ total }}</div>
-            <div class="stat-label">总记录数</div>
+            <div class="stat-value">{{ todaySnack }}</div>
+            <div class="stat-label">今日加餐</div>
           </div>
         </div>
       </el-card>
@@ -201,8 +205,7 @@
           v-model:current-page="pagination.currentPage"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           class="pagination"
@@ -309,7 +312,6 @@ import {
   Food,
   Dish,
   Bowl,
-  DataBoard,
   Filter,
   RefreshLeft,
   List,
@@ -323,7 +325,6 @@ const showDialog = ref(false)
 const submitting = ref(false)
 const editingRecord = ref<Diet | null>(null)
 const formRef = ref<FormInstance>()
-const total = ref(0)
 
 // 分页配置
 const pagination = reactive({
@@ -352,9 +353,46 @@ const todayCalories = computed(() => {
     .reduce((sum, diet) => sum + (diet.calories || 0), 0)
 })
 
-const todayMeals = computed(() => {
+// 今日各餐类型统计
+const todayBreakfast = computed(() => {
   const today = new Date().toISOString().split('T')[0]
-  return dietList.value.filter((diet) => diet.recordDate === today).length
+  return dietList.value.filter(
+    (diet) =>
+      diet.recordDate === today &&
+      (diet.mealType === 'breakfast' || diet.mealType === '早餐'),
+  ).length
+})
+
+const todayLunch = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return dietList.value.filter(
+    (diet) =>
+      diet.recordDate === today &&
+      (diet.mealType === 'lunch' || diet.mealType === '午餐'),
+  ).length
+})
+
+const todayDinner = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return dietList.value.filter(
+    (diet) =>
+      diet.recordDate === today &&
+      (diet.mealType === 'dinner' || diet.mealType === '晚餐'),
+  ).length
+})
+
+const todaySnack = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return dietList.value.filter(
+    (diet) =>
+      diet.recordDate === today &&
+      (diet.mealType === 'snack' || diet.mealType === '加餐'),
+  ).length
+})
+
+// 今日三餐总数
+const todayMealsTotal = computed(() => {
+  return todayBreakfast.value + todayLunch.value + todayDinner.value
 })
 
 // 健康目标数据
@@ -451,7 +489,6 @@ const loadData = async () => {
         (a, b) =>
           new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
       )
-      total.value = response.data.total || 0
     }
   } catch (error: unknown) {
     console.error('加载数据失败:', error)
@@ -628,7 +665,7 @@ onUnmounted(() => {
 <style scoped>
 .diet-management {
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -638,12 +675,44 @@ onUnmounted(() => {
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 15px 35px rgba(255, 154, 158, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .title-section {
@@ -658,18 +727,33 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 15px;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
 }
 
 .title-icon {
   font-size: 3rem;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .subtitle {
   font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  font-weight: 500;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .add-btn {
@@ -742,11 +826,11 @@ onUnmounted(() => {
 }
 
 .meals-card {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
 }
 
-.total-card {
-  background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+.snack-card {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
 }
 
 .stat-content {
@@ -781,6 +865,12 @@ onUnmounted(() => {
 .stat-trend {
   font-size: 0.9rem;
   opacity: 0.8;
+}
+
+.stat-detail {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-top: 5px;
 }
 
 .filter-card,

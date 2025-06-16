@@ -9,6 +9,10 @@
           </h1>
           <p class="subtitle">管理您的个人信息，完善健康档案</p>
         </div>
+        <el-button type="danger" class="logout-btn" @click="handleLogout">
+          <el-icon><SwitchButton /></el-icon>
+          退出登录
+        </el-button>
       </div>
     </div>
     <!-- 个人信息卡片 -->
@@ -346,6 +350,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import { userApi, statisticsApi, bodyDataApi, dietApi } from '@/api'
 import MD5 from 'crypto-js/md5'
 
@@ -365,7 +371,11 @@ import {
   Setting,
   Aim,
   Loading,
+  SwitchButton,
 } from '@element-plus/icons-vue'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 // 用户基本信息
 const userInfo = reactive({
@@ -892,6 +902,12 @@ const getWeightColor = () => {
   }
 }
 
+// 退出登录
+const handleLogout = () => {
+  userStore.logout()
+  router.push('/login')
+}
+
 // 初始化数据
 const initData = async () => {
   loadGoals()
@@ -924,8 +940,8 @@ onUnmounted(() => {
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px;
-  padding: 35px;
-  margin-bottom: 35px;
+  padding: 30px;
+  margin-bottom: 30px;
   box-shadow:
     0 15px 35px rgba(102, 126, 234, 0.25),
     0 8px 25px rgba(102, 126, 234, 0.15);
@@ -969,18 +985,18 @@ onUnmounted(() => {
   flex: 1;
 }
 .page-title {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #fff;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 15px;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   letter-spacing: 1px;
 }
 .title-icon {
-  font-size: 3.2rem;
+  font-size: 3rem;
   color: #fff;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
   animation: pulse 2s ease-in-out infinite;
@@ -995,7 +1011,7 @@ onUnmounted(() => {
   }
 }
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
   font-weight: 500;
@@ -1462,6 +1478,29 @@ onUnmounted(() => {
 .target-weight {
   color: #667eea;
   font-weight: 600;
+}
+
+/* 退出登录按钮样式 */
+.logout-btn {
+  background: linear-gradient(45deg, #EF4444 0%, #F87171 50%, #FCA5A5 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 18px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+  transition: all 0.3s ease;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(239, 68, 68, 0.5);
+  background: linear-gradient(45deg, #FCA5A5 0%, #F87171 50%, #EF4444 100%);
 }
 
 /* 响应式设计 */

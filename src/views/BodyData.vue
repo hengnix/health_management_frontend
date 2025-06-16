@@ -66,18 +66,6 @@
           </div>
         </div>
       </el-card>
-
-      <el-card class="stat-card total-card">
-        <div class="stat-content">
-          <div class="stat-icon">
-            <el-icon><Document /></el-icon>
-          </div>
-          <div class="stat-info">
-            <div class="stat-value">{{ total }}</div>
-            <div class="stat-label">总记录数</div>
-          </div>
-        </div>
-      </el-card>
     </div>
 
     <!-- 筛选器 -->
@@ -211,8 +199,7 @@
           v-model:current-page="pagination.currentPage"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           class="pagination"
@@ -316,7 +303,6 @@ import {
   TrendCharts,
   Platform,
   DataAnalysis,
-  Document,
   Filter,
   RefreshLeft,
   List,
@@ -330,7 +316,6 @@ const showDialog = ref(false)
 const submitting = ref(false)
 const editingRecord = ref<BodyData | null>(null)
 const formRef = ref<FormInstance>()
-const total = ref(0)
 
 // 分页配置
 const pagination = reactive({
@@ -454,7 +439,6 @@ const loadData = async () => {
           (a, b) =>
             new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
         )
-      total.value = response.data.total || 0
 
       console.log('Loaded body data:', bodyDataList.value) // 添加调试日志
     }
@@ -638,7 +622,7 @@ onUnmounted(() => {
 <style scoped>
 .body-data {
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: transparent;
   min-height: 100vh;
 }
 
@@ -648,12 +632,44 @@ onUnmounted(() => {
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 15px 35px rgba(255, 154, 158, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .title-section {
@@ -674,6 +690,17 @@ onUnmounted(() => {
   font-size: 3rem;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .subtitle {
@@ -757,10 +784,6 @@ onUnmounted(() => {
 
 .bmi-card {
   background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-}
-
-.total-card {
-  background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
 }
 
 .stat-content {

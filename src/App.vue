@@ -94,54 +94,20 @@
 
               <!-- 用户信息区域 -->
               <div class="user-section">
-                <el-dropdown
-                  @command="handleCommand"
-                  trigger="click"
-                  class="user-dropdown cursor-pointer"
-                  placement="top-start"
-                  :popper-options="{
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [0, 8],
-                        },
-                      },
-                    ],
-                  }"
-                >
-                  <div class="user-menu-item">
-                    <el-avatar size="small" class="user-avatar">
-                      <img
-                        v-if="userStore.avatarUrl"
-                        :src="userStore.avatarUrl"
-                        alt="用户头像"
-                        class="avatar-image"
-                      />
-                      <el-icon v-else><User /></el-icon>
-                    </el-avatar>
-                    <span class="menu-text">{{
-                      userStore.user?.nickname || '用户'
-                    }}</span>
-                    <el-icon class="dropdown-arrow"><ArrowDown /></el-icon>
-                  </div>
-                  <template #dropdown>
-                    <el-dropdown-menu class="custom-dropdown">
-                      <el-dropdown-item command="profile" class="dropdown-item">
-                        <el-icon><User /></el-icon>
-                        <span>个人资料</span>
-                      </el-dropdown-item>
-                      <el-dropdown-item
-                        command="logout"
-                        divided
-                        class="dropdown-item logout-item"
-                      >
-                        <el-icon><SwitchButton /></el-icon>
-                        <span>退出登录</span>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
+                <div class="user-menu-item" @click="goToProfile">
+                  <el-avatar size="small" class="user-avatar">
+                    <img
+                      v-if="userStore.avatarUrl"
+                      :src="userStore.avatarUrl"
+                      alt="用户头像"
+                      class="avatar-image"
+                    />
+                    <el-icon v-else><User /></el-icon>
+                  </el-avatar>
+                  <span class="menu-text">{{
+                    userStore.user?.nickname || '用户'
+                  }}</span>
+                </div>
               </div>
             </div>
           </el-aside>
@@ -172,8 +138,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
   User,
-  ArrowDown,
-  SwitchButton,
   DataBoard,
   Menu,
   Odometer,
@@ -189,16 +153,8 @@ const userStore = useUserStore()
 
 const isLoginPage = computed(() => route.path === '/login')
 
-const handleCommand = (command: string) => {
-  switch (command) {
-    case 'profile':
-      router.push('/profile')
-      break
-    case 'logout':
-      userStore.logout()
-      router.push('/login')
-      break
-  }
+const goToProfile = () => {
+  router.push('/profile')
 }
 </script>
 
@@ -349,15 +305,6 @@ body {
     0 2px 8px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.user-menu-item .dropdown-arrow {
-  font-size: 12px;
-  transition: transform 0.3s ease;
-}
-
-.user-menu-item:hover .dropdown-arrow {
-  transform: rotate(180deg);
 }
 
 .user-avatar .avatar-image {
@@ -600,61 +547,6 @@ body {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateX(-30px) translateY(-10px);
-}
-
-/* 下拉菜单样式 - 白色背景确保可读性 */
-.custom-dropdown {
-  border-radius: 8px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.1),
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(15px);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.98) 100%
-  );
-  padding: 8px;
-  min-width: 160px;
-}
-
-.dropdown-item {
-  border-radius: 6px;
-  margin: 2px 0;
-  padding: 12px 16px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
-  color: rgba(55, 65, 81, 0.9);
-  background: transparent;
-}
-
-.dropdown-item:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(59, 130, 246, 0.1) 0%,
-    rgba(37, 99, 235, 0.08) 100%
-  );
-  color: #1f2937;
-  transform: translateX(2px);
-  box-shadow:
-    0 1px 0 rgba(59, 130, 246, 0.1),
-    inset 0 1px 0 rgba(59, 130, 246, 0.05);
-}
-
-.logout-item:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(220, 38, 38, 0.3) 0%,
-    rgba(185, 28, 28, 0.4) 100%
-  );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* 响应式设计 */

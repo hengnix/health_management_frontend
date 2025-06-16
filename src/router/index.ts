@@ -13,6 +13,11 @@ const routes = [
   {
     path: '/',
     redirect: () => {
+      // 开发模式下直接跳转到 dashboard，生产模式下检查 token
+      if (import.meta.env.DEV) {
+        return '/dashboard'
+      }
+
       // 检查是否有 token 来决定重定向目标
       const hasToken = !!localStorage.getItem('token')
       return hasToken ? '/dashboard' : '/login'
@@ -77,6 +82,13 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, _from, next) => {
   const userStore = useUserStore()
+
+  // 开发模式下跳过认证检查
+  if (import.meta.env.DEV) {
+    console.log('开发模式：跳过认证检查，直接允许访问', to.path)
+    next()
+    return
+  }
 
   // 检查登录状态，包括 token 和 userID
   const hasToken = !!localStorage.getItem('token')

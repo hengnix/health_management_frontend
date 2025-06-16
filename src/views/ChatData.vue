@@ -577,11 +577,11 @@ onUnmounted(() => {
 }
 
 .page-header {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #67e8f9 100%);
   border-radius: 20px;
-  padding: 20px 35px; /* 减少垂直内边距从 35px 改为 20px */
-  margin-bottom: 25px;
-  box-shadow: 0 8px 25px rgba(255, 154, 158, 0.15);
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 15px 35px rgba(8, 145, 178, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   position: relative;
@@ -676,19 +676,19 @@ onUnmounted(() => {
 }
 
 .page-title {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #fff;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 15px;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   letter-spacing: 1px;
 }
 
 .title-icon {
-  font-size: 3.2rem;
+  font-size: 3rem;
   color: #fff;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
   animation: pulse 2s ease-in-out infinite;
@@ -705,7 +705,7 @@ onUnmounted(() => {
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
   font-weight: 500;

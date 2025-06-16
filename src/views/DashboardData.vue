@@ -956,13 +956,11 @@ onUnmounted(() => {
 }
 
 .page-header {
-  background: linear-gradient(135deg, #8a2be2 0%, #9370db 50%, #ba55d3 100%);
+  background: linear-gradient(135deg, #4f80ff 0%, #6fb7ff 50%, #a8d5ff 100%);
   border-radius: 20px;
-  padding: 35px;
-  margin-bottom: 35px;
-  box-shadow:
-    0 15px 35px rgba(138, 43, 226, 0.25),
-    0 8px 25px rgba(147, 112, 219, 0.15);
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 15px 35px rgba(79, 128, 255, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   position: relative;
@@ -1008,21 +1006,21 @@ onUnmounted(() => {
 }
 
 .page-title {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #fff;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 15px;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   letter-spacing: 1px;
 }
 
 .title-icon {
-  font-size: 3.2rem;
+  font-size: 3rem;
   color: #fff;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -1037,7 +1035,7 @@ onUnmounted(() => {
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
   font-weight: 500;
@@ -1098,11 +1096,11 @@ onUnmounted(() => {
 }
 
 .calories-out-card {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
 }
 
 .weight-card-enhanced {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
 }
 
 .weight-card {
@@ -1876,24 +1874,25 @@ onUnmounted(() => {
 }
 
 .add-btn {
-  background: linear-gradient(45deg, #fa709a 0%, #fee140 100%);
+  background: linear-gradient(45deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
   border: none;
-  border-radius: 25px;
-  padding: 15px 30px;
+  border-radius: 12px;
+  padding: 18px 30px;
   font-size: 1.1rem;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(250, 112, 154, 0.4);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
   transition: all 0.3s ease;
   color: white;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 50px;
 }
 
 .add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(250, 112, 154, 0.5);
-  background: linear-gradient(45deg, #fee140 0%, #fa709a 100%);
+  box-shadow: 0 12px 25px rgba(139, 92, 246, 0.5);
+  background: linear-gradient(45deg, #c084fc 0%, #a855f7 50%, #8b5cf6 100%);
 }
 
 .dropdown-arrow {
