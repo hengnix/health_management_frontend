@@ -130,8 +130,8 @@ const goBack = () => {
     #44a08d 75%,
     #667eea 100%
   );
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
 }
 
 @keyframes gradientShift {
@@ -161,7 +161,7 @@ const goBack = () => {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  animation: floating 6s ease-in-out infinite;
+  animation: floating 4s ease-in-out infinite;
 }
 
 .shape-1 {
@@ -202,13 +202,9 @@ const goBack = () => {
     transform: translateY(0px) rotate(0deg);
     opacity: 0.3;
   }
-  33% {
-    transform: translateY(-30px) rotate(120deg);
-    opacity: 0.6;
-  }
-  66% {
-    transform: translateY(20px) rotate(240deg);
-    opacity: 0.4;
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.5;
   }
 }
 
@@ -226,13 +222,13 @@ const goBack = () => {
     0 15px 35px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  animation: slideInUp 1s ease-out;
+  animation: slideInUp 0.6s ease-out;
 }
 
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -257,17 +253,17 @@ const goBack = () => {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
   position: relative;
-  animation: slideInDown 0.8s ease-out;
+  animation: slideInDown 0.5s ease-out;
 }
 
 .digit.animated {
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-50px);
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
@@ -281,19 +277,19 @@ const goBack = () => {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 }
 
 .error-info {
   margin-bottom: 50px;
-  animation: fadeInUp 1s ease-out 0.3s both;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -333,7 +329,7 @@ const goBack = () => {
   gap: 20px;
   margin-bottom: 50px;
   flex-wrap: wrap;
-  animation: fadeInUp 1s ease-out 0.6s both;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
 }
 
 .action-btn {
@@ -341,7 +337,7 @@ const goBack = () => {
   border-radius: 20px;
   font-size: 1.1rem;
   font-weight: 600;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.25s ease;
   border: none;
   position: relative;
   overflow: hidden;
@@ -379,7 +375,7 @@ const goBack = () => {
     rgba(255, 255, 255, 0.3),
     transparent
   );
-  transition: left 0.5s ease;
+  transition: left 0.3s ease;
 }
 
 .action-btn:hover::before {
@@ -387,8 +383,8 @@ const goBack = () => {
 }
 
 .action-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .secondary-btn:hover {
@@ -397,7 +393,7 @@ const goBack = () => {
 }
 
 .quick-nav {
-  animation: fadeInUp 1s ease-out 0.9s both;
+  animation: fadeInUp 0.6s ease-out 0.5s both;
 }
 
 .nav-title {
@@ -429,7 +425,7 @@ const goBack = () => {
   border: 1px solid rgba(102, 126, 234, 0.1);
   color: #667eea;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   backdrop-filter: blur(10px);
   min-width: 100px;
   font-weight: 500;
@@ -438,8 +434,8 @@ const goBack = () => {
 .nav-link:hover {
   background: rgba(102, 126, 234, 0.1);
   border-color: rgba(102, 126, 234, 0.3);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.15);
   color: #667eea;
   text-decoration: none;
 }
@@ -470,7 +466,7 @@ const goBack = () => {
   height: 100%;
   background: rgba(255, 255, 255, 0.1);
   clip-path: polygon(0 50%, 100% 80%, 100% 100%, 0 100%);
-  animation: waveAnimation 4s ease-in-out infinite;
+  animation: waveAnimation 3s ease-in-out infinite;
 }
 
 .wave-1 {
@@ -496,7 +492,7 @@ const goBack = () => {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(-20px);
+    transform: translateX(-15px);
   }
 }
 

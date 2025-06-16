@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <template v-if="!isLoginPage">
+    <template v-if="!isFullScreenPage">
       <el-container class="layout-container">
         <!-- 统一的顶部导航栏 -->
         <el-header
@@ -151,7 +151,9 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const isLoginPage = computed(() => route.path === '/login')
+const isFullScreenPage = computed(
+  () => route.path === '/login' || route.name === 'NotFound',
+)
 
 const goToProfile = () => {
   router.push('/profile')
@@ -229,7 +231,7 @@ body {
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 2.5s ease-in-out infinite;
 }
 
 /* 用户信息区域样式 */
@@ -244,7 +246,7 @@ body {
 .user-menu-item {
   margin: 8px 0;
   border-radius: 12px;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
@@ -372,7 +374,7 @@ body {
 .menu-item {
   margin: 8px 0;
   border-radius: 12px;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的缓动函数和时长 */
+  transition: all 0.3s ease; /* 更平滑的缓动函数和时长 */
   position: relative;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
@@ -535,18 +537,18 @@ body {
 /* 页面过渡动画 */
 .fade-slide-enter-active,
 .fade-slide-leave-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.25s ease;
   overflow: hidden; /* 防止过渡期间出现滚动条或其他视觉问题 */
 }
 
 .fade-slide-enter-from {
   opacity: 0;
-  transform: translateX(30px) translateY(10px);
+  transform: translateX(20px);
 }
 
 .fade-slide-leave-to {
   opacity: 0;
-  transform: translateX(-30px) translateY(-10px);
+  transform: translateX(-20px);
 }
 
 /* 响应式设计 */
