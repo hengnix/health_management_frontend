@@ -32,7 +32,10 @@
           <div class="stat-info">
             <div class="stat-value">{{ todayStats.totalCalories }}</div>
             <div class="stat-label">今日消耗卡路里</div>
-            <div class="stat-trend">燃烧脂肪</div>
+            <div class="stat-trend">
+              目标消耗: {{ healthGoals.dailyCaloriesBurn || '未设置' }}
+              {{ healthGoals.dailyCaloriesBurn ? 'kcal' : '' }}
+            </div>
           </div>
         </div>
       </el-card>
@@ -344,7 +347,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { exerciseApi } from '@/api'
 import type { ExerciseRecord, ExerciseRequest } from '@/types'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
@@ -436,6 +439,24 @@ const todayStats = computed(() => {
     averageDuration,
   }
 })
+
+// 健康目标数据
+const healthGoals = reactive({
+  targetWeight: null as number | null,
+  dailyCaloriesIntake: null as number | null,
+  dailyCaloriesBurn: null as number | null,
+})
+
+// 加载健康目标
+const loadHealthGoals = () => {
+  const savedGoals = localStorage.getItem('healthGoals')
+  if (savedGoals) {
+    const parsed = JSON.parse(savedGoals)
+    healthGoals.targetWeight = parsed.targetWeight
+    healthGoals.dailyCaloriesIntake = parsed.dailyCaloriesIntake
+    healthGoals.dailyCaloriesBurn = parsed.dailyCaloriesBurn
+  }
+}
 
 // 获取运动类型对应的标签颜色
 const getExerciseTypeColor = (exerciseType: string) => {
@@ -642,9 +663,25 @@ const getIntensityTagType = () => {
   }
 }
 
+// 页面可见性监听器，用于同步健康目标的更新
+const handleVisibilityChange = () => {
+  if (!document.hidden) {
+    loadHealthGoals()
+  }
+}
+
 onMounted(() => {
   loadData()
   resetForm()
+  loadHealthGoals()
+
+  // 监听页面可见性变化
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
+
+// 清理事件监听器
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 

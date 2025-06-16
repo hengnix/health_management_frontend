@@ -32,6 +32,10 @@
           <div class="stat-info">
             <div class="stat-value">{{ latestWeight || '--' }}</div>
             <div class="stat-label">最新体重 (kg)</div>
+            <div class="stat-trend">
+              目标体重: {{ healthGoals.targetWeight || '未设置' }}
+              {{ healthGoals.targetWeight ? 'kg' : '' }}
+            </div>
           </div>
         </div>
       </el-card>
@@ -296,7 +300,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { bodyDataApi } from '@/api'
 import type {
   BodyData,
@@ -375,6 +379,24 @@ const bmiStatusClass = computed(() => {
   if (bmi < 28) return 'overweight'
   return 'obese'
 })
+
+// 健康目标数据
+const healthGoals = reactive({
+  targetWeight: null as number | null,
+  dailyCaloriesIntake: null as number | null,
+  dailyCaloriesBurn: null as number | null,
+})
+
+// 加载健康目标
+const loadHealthGoals = () => {
+  const savedGoals = localStorage.getItem('healthGoals')
+  if (savedGoals) {
+    const parsed = JSON.parse(savedGoals)
+    healthGoals.targetWeight = parsed.targetWeight
+    healthGoals.dailyCaloriesIntake = parsed.dailyCaloriesIntake
+    healthGoals.dailyCaloriesBurn = parsed.dailyCaloriesBurn
+  }
+}
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('zh-CN')
@@ -591,9 +613,25 @@ const getBMIStatus = (height: number, weight: number) => {
   return '肥胖'
 }
 
+// 页面可见性监听器，用于同步健康目标的更新
+const handleVisibilityChange = () => {
+  if (!document.hidden) {
+    loadHealthGoals()
+  }
+}
+
 onMounted(() => {
   loadData()
   resetForm()
+  loadHealthGoals()
+
+  // 监听页面可见性变化
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
+
+// 清理事件监听器
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 
@@ -752,6 +790,11 @@ onMounted(() => {
   font-size: 1rem;
   opacity: 0.9;
   margin-bottom: 5px;
+}
+
+.stat-trend {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .bmi-status {

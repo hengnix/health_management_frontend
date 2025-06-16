@@ -63,11 +63,11 @@
           </router-link>
           <router-link to="/diet" class="nav-link">
             <el-icon><Food /></el-icon>
-            <span>饮食记录</span>
+            <span>饮食管理</span>
           </router-link>
           <router-link to="/exercise" class="nav-link">
             <el-icon><Bicycle /></el-icon>
-            <span>运动记录</span>
+            <span>运动管理</span>
           </router-link>
           <router-link to="/chat" class="nav-link">
             <el-icon><ChatDotRound /></el-icon>

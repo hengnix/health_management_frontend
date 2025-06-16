@@ -37,6 +37,24 @@
     </div>
     <!-- 统计卡片 -->
     <div class="stats-grid">
+      <el-card class="stat-card weight-card-enhanced">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <el-icon><DataAnalysis /></el-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">
+              {{ statistics.averageWeight.toFixed(1) }}
+            </div>
+            <div class="stat-label">当前体重 (kg)</div>
+            <div class="stat-trend">
+              目标体重: {{ healthGoals.targetWeight || '未设置' }}
+              {{ healthGoals.targetWeight ? 'kg' : '' }}
+            </div>
+          </div>
+        </div>
+      </el-card>
+
       <el-card class="stat-card calories-in-card">
         <div class="stat-content">
           <div class="stat-icon">
@@ -64,24 +82,6 @@
             <div class="stat-trend">
               目标消耗: {{ healthGoals.dailyCaloriesBurn || '未设置' }}
               {{ healthGoals.dailyCaloriesBurn ? 'kcal' : '' }}
-            </div>
-          </div>
-        </div>
-      </el-card>
-
-      <el-card class="stat-card weight-card-enhanced">
-        <div class="stat-content">
-          <div class="stat-icon">
-            <el-icon><DataAnalysis /></el-icon>
-          </div>
-          <div class="stat-info">
-            <div class="stat-value">
-              {{ statistics.averageWeight.toFixed(1) }}
-            </div>
-            <div class="stat-label">当前体重 (kg)</div>
-            <div class="stat-trend">
-              目标体重: {{ healthGoals.targetWeight || '未设置' }}
-              {{ healthGoals.targetWeight ? 'kg' : '' }}
             </div>
           </div>
         </div>
@@ -543,7 +543,7 @@ const initCaloriesChart = async () => {
             symbolSize: 6,
             lineStyle: {
               width: 3,
-              color: '#10b981', // 绿色
+              color: '#10b981',
             },
             itemStyle: {
               color: '#10b981',
@@ -560,10 +560,10 @@ const initCaloriesChart = async () => {
             symbolSize: 6,
             lineStyle: {
               width: 3,
-              color: '#ef4444', // 红色
+              color: '#dc2626',
             },
             itemStyle: {
-              color: '#ef4444',
+              color: '#dc2626',
               borderColor: '#fff',
               borderWidth: 2,
             },
@@ -577,10 +577,10 @@ const initCaloriesChart = async () => {
             symbolSize: 6,
             lineStyle: {
               width: 3,
-              color: '#f59e0b', // 黄色
+              color: '#ea580c',
             },
             itemStyle: {
-              color: '#f59e0b',
+              color: '#ea580c',
               borderColor: '#fff',
               borderWidth: 2,
             },
@@ -1290,7 +1290,7 @@ onUnmounted(() => {
 }
 
 .average-item .value.red {
-  color: #ef4444;
+  color: #dc2626;
 }
 
 .average-item .value.yellow {

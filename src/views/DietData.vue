@@ -33,7 +33,7 @@
             <div class="stat-value">{{ todayCalories }}</div>
             <div class="stat-label">今日卡路里 (kcal)</div>
             <div class="stat-trend">
-              建议摄入: {{ healthGoals.dailyCaloriesIntake || '未设置' }}
+              目标摄入: {{ healthGoals.dailyCaloriesIntake || '未设置' }}
               {{ healthGoals.dailyCaloriesIntake ? 'kcal' : '' }}
             </div>
           </div>
