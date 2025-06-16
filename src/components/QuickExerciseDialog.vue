@@ -44,7 +44,7 @@
               />
               <span
                 class="pointer-events-none absolute top-1/2 right-10 z-10 -translate-y-1/2 transform bg-white px-1 text-sm text-gray-400"
-                >分钟</span
+                >min</span
               >
             </div>
           </el-form-item>
@@ -213,7 +213,9 @@
           class="relative overflow-hidden rounded-2xl border-none bg-gradient-to-r from-orange-500 to-red-600 px-8 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-red-600 hover:to-orange-500 hover:shadow-lg"
         >
           <el-icon><Check /></el-icon>
-          {{ submitting ? '记录中...' : '确认记录' }}
+          <span>
+            {{ submitting ? '记录中...' : '确认记录' }}
+          </span>
         </el-button>
       </div>
     </template>
@@ -590,11 +592,23 @@ watch(
 
 /* 单选按钮组样式 */
 :deep(.el-radio-button__inner) {
-  border-radius: 0.75rem;
+  border-radius: 0;
   border: 2px solid rgb(254 215 170);
   background: rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
 }
+
+/* 第一个按钮 - 左侧圆角 */
+:deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+/* 最后一个按钮 - 右侧圆角 */
+:deep(.el-radio-button:last-child .el-radio-button__inner) {
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+/* 中间按钮保持矩形 - 已经通过上面的 border-radius: 0 实现 */
 
 :deep(.el-radio-button__inner:hover) {
   border-color: rgb(251 146 60);

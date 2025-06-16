@@ -23,7 +23,7 @@
             <el-icon>
               <Delete />
             </el-icon>
-            清除记忆
+            <span> 清除记忆 </span>
           </el-button>
           <el-button
             type="warning"
@@ -34,7 +34,7 @@
             <el-icon>
               <Delete />
             </el-icon>
-            清除历史
+            <span> 清除历史 </span>
           </el-button>
         </div>
       </div>

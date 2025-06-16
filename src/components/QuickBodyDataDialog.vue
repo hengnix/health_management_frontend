@@ -76,7 +76,7 @@
         class="animate-fade-in-up mt-6"
       >
         <el-card
-          class="rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+          class="w-full rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
         >
           <div class="flex flex-col gap-4">
             <div class="flex items-center justify-between">
@@ -95,7 +95,7 @@
             </div>
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span
-                class="rounded-xl border border-indigo-200 bg-indigo-100 px-3 py-1.5 text-sm font-semibold text-indigo-600"
+                class="bmi-status-badge border border-indigo-200 bg-indigo-100 text-sm font-semibold text-indigo-600"
               >
                 {{ getBMIStatus() }}
               </span>
@@ -138,7 +138,9 @@
           class="relative overflow-hidden rounded-2xl border-none bg-gradient-to-r from-indigo-500 to-purple-600 px-8 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-purple-600 hover:to-indigo-500 hover:shadow-lg"
         >
           <el-icon><Check /></el-icon>
-          {{ submitting ? '记录中...' : '确认记录' }}
+          <span>
+            {{ submitting ? '记录中...' : '确认记录' }}
+          </span>
         </el-button>
       </div>
     </template>
@@ -582,6 +584,15 @@ const handleSubmit = async () => {
 
 .animation-delay-200 {
   animation-delay: 0.2s;
+}
+
+/* BMI 状态徽章椭圆形样式 */
+.bmi-status-badge {
+  border-radius: 50px;
+  padding: 6px 16px;
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 12px;
 }
 
 /* 响应式设计 */

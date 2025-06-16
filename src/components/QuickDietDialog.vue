@@ -64,46 +64,22 @@
         </el-autocomplete>
       </el-form-item>
 
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="食物重量" prop="foodWeight">
-            <div class="relative flex w-full items-center">
-              <el-input-number
-                v-model="form.foodWeight"
-                :min="1"
-                :max="2000"
-                :precision="0"
-                style="width: 100%"
-                placeholder="食物重量"
-                controls-position="right"
-                @change="calculateCalories"
-              />
-              <span
-                class="pointer-events-none absolute top-1/2 right-10 z-10 -translate-y-1/2 transform bg-white px-1 text-sm text-gray-400"
-                >g</span
-              >
-            </div>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="估计热量" prop="estimatedCalories">
-            <div class="relative flex w-full items-center">
-              <el-input-number
-                v-model="form.estimatedCalories"
-                :min="0"
-                :precision="0"
-                style="width: 100%"
-                placeholder="热量值"
-                controls-position="right"
-              />
-              <span
-                class="pointer-events-none absolute top-1/2 right-10 z-10 -translate-y-1/2 transform bg-white px-1 text-sm text-gray-400"
-                >kcal</span
-              >
-            </div>
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <el-form-item label="估计热量" prop="estimatedCalories">
+        <div class="relative flex w-full items-center">
+          <el-input-number
+            v-model="form.estimatedCalories"
+            :min="0"
+            :precision="0"
+            style="width: 100%"
+            placeholder="热量值"
+            controls-position="right"
+          />
+          <span
+            class="pointer-events-none absolute top-1/2 right-10 z-10 -translate-y-1/2 transform bg-white px-1 text-sm text-gray-400"
+            >kcal</span
+          >
+        </div>
+      </el-form-item>
 
       <!-- 营养成分预览 -->
       <div
@@ -133,13 +109,6 @@
                 <span
                   class="rounded-2xl bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-800"
                   >{{ form.foodName }}</span
-                >
-              </div>
-              <div class="flex items-center justify-between py-2">
-                <span class="text-sm font-semibold text-gray-700">⚖️ 重量</span>
-                <span
-                  class="rounded-2xl bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800"
-                  >{{ form.foodWeight || 0 }}g</span
                 >
               </div>
               <div class="flex items-center justify-between py-2">
@@ -192,7 +161,9 @@
           class="relative overflow-hidden rounded-2xl border-none bg-gradient-to-r from-emerald-500 to-teal-600 px-8 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-teal-600 hover:to-emerald-500 hover:shadow-lg"
         >
           <el-icon><Check /></el-icon>
-          {{ submitting ? '记录中...' : '确认记录' }}
+          <span>
+            {{ submitting ? '记录中...' : '确认记录' }}
+          </span>
         </el-button>
       </div>
     </template>
@@ -227,7 +198,6 @@ const form = reactive({
   foodName: '',
   recordDate: new Date().toISOString().split('T')[0],
   estimatedCalories: undefined as number | undefined,
-  foodWeight: undefined as number | undefined,
 })
 
 const rules = {
@@ -239,10 +209,6 @@ const rules = {
   estimatedCalories: [
     { required: true, message: '请输入估计热量', trigger: 'blur' },
     { type: 'number', min: 1, message: '热量必须大于 0', trigger: 'blur' },
-  ],
-  foodWeight: [
-    { required: true, message: '请输入食物重量', trigger: 'blur' },
-    { type: 'number', min: 1, message: '重量必须大于 0', trigger: 'blur' },
   ],
 }
 
@@ -279,7 +245,6 @@ const resetForm = () => {
     foodName: '',
     recordDate: new Date().toISOString().split('T')[0],
     estimatedCalories: undefined,
-    foodWeight: undefined,
   })
   formRef.value?.clearValidate()
 }
@@ -422,15 +387,6 @@ const querySearch = async (
 const handleFoodSelect = (item: { value: string; calories: number }) => {
   form.foodName = item.value
   form.estimatedCalories = item.calories
-}
-
-// 计算热量
-const calculateCalories = () => {
-  if (form.foodWeight && form.estimatedCalories) {
-    form.estimatedCalories = Math.round(
-      (form.foodWeight / 100) * form.estimatedCalories,
-    )
-  }
 }
 
 // 健康提示

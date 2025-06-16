@@ -161,14 +161,12 @@ const goToProfile = () => {
 </script>
 
 <style>
-/* 全局样式重置 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Element Plus 强制重置 */
 .el-container,
 .el-header,
 .el-aside,
@@ -469,7 +467,6 @@ body {
   transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 强制重置 Element Plus el-main 默认样式 */
 .main-content.el-main {
   --el-main-padding: 0 !important;
   padding: 0 !important;

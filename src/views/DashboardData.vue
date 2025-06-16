@@ -13,7 +13,7 @@
         <el-dropdown @command="handleQuickRecord" class="quick-record-dropdown">
           <el-button type="primary" class="add-btn">
             <el-icon><Plus /></el-icon>
-            快速记录
+            <span>快速记录</span>
             <el-icon class="dropdown-arrow"><ArrowDown /></el-icon>
           </el-button>
           <template #dropdown>

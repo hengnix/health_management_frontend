@@ -17,7 +17,7 @@
           class="add-btn"
         >
           <el-icon><Plus /></el-icon>
-          添加运动记录
+          <span> 添加运动记录 </span>
         </el-button>
       </div>
     </div>
@@ -119,7 +119,7 @@
         <el-form-item>
           <el-button @click="resetFilter" class="reset-btn">
             <el-icon><RefreshLeft /></el-icon>
-            重置
+            <span> 重置 </span>
           </el-button>
         </el-form-item>
       </el-form>

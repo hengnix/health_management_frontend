@@ -7,11 +7,11 @@
           <h1 class="page-title">
             <el-icon class="title-icon"><User /></el-icon> 个人资料
           </h1>
-          <p class="subtitle">管理您的个人信息，完善健康档案</p>
+          <p class="subtitle">管理您的个人信息，设立您的个人目标</p>
         </div>
         <el-button type="danger" class="logout-btn" @click="handleLogout">
           <el-icon><SwitchButton /></el-icon>
-          退出登录
+          <span> 退出登录 </span>
         </el-button>
       </div>
     </div>
@@ -32,7 +32,7 @@
             @click="editBasicInfo"
             class="edit-btn"
           >
-            <el-icon><Edit /></el-icon> 编辑
+            <el-icon><Edit /></el-icon> <span>编辑</span>
           </el-button>
         </div>
         <div class="info-content">
@@ -115,6 +115,28 @@
         <div class="stats-content">
           <div class="stat-row">
             <div class="stat-item">
+              <div class="stat-icon weight-icon">
+                <el-icon><DataAnalysis /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">
+                  {{ healthStats.totalRecords.body }}
+                </div>
+                <div class="stat-label">体重记录</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon days-icon">
+                <el-icon><Clock /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ healthStats.activeDays }}</div>
+                <div class="stat-label">活跃天数</div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
               <div class="stat-icon calories-icon">
                 <el-icon><Food /></el-icon>
               </div>
@@ -137,28 +159,6 @@
               </div>
             </div>
           </div>
-          <div class="stat-row">
-            <div class="stat-item">
-              <div class="stat-icon weight-icon">
-                <el-icon><DataAnalysis /></el-icon>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">
-                  {{ healthStats.totalRecords.body }}
-                </div>
-                <div class="stat-label">体重记录</div>
-              </div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-icon days-icon">
-                <el-icon><Clock /></el-icon>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">{{ healthStats.activeDays }}</div>
-                <div class="stat-label">活跃天数</div>
-              </div>
-            </div>
-          </div>
         </div>
       </el-card>
     </div>
@@ -175,7 +175,7 @@
             @click="editGoals"
             class="edit-btn"
           >
-            <el-icon><Setting /></el-icon> 设置目标
+            <el-icon><Setting /></el-icon> <span>设置目标</span>
           </el-button>
         </div>
         <div class="goals-content">
@@ -1482,7 +1482,7 @@ onUnmounted(() => {
 
 /* 退出登录按钮样式 */
 .logout-btn {
-  background: linear-gradient(45deg, #EF4444 0%, #F87171 50%, #FCA5A5 100%);
+  background: linear-gradient(45deg, #ef4444 0%, #f87171 50%, #fca5a5 100%);
   border: none;
   border-radius: 12px;
   padding: 18px 30px;
@@ -1500,7 +1500,7 @@ onUnmounted(() => {
 .logout-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 25px rgba(239, 68, 68, 0.5);
-  background: linear-gradient(45deg, #FCA5A5 0%, #F87171 50%, #EF4444 100%);
+  background: linear-gradient(45deg, #fca5a5 0%, #f87171 50%, #ef4444 100%);
 }
 
 /* 响应式设计 */
