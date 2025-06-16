@@ -8,7 +8,7 @@
             <el-icon class="title-icon">
               <ChatDotRound />
             </el-icon>
-            AI 智能聊天
+            健康咨询
           </h1>
           <p class="subtitle">与 AI 助手交流，获取健康管理建议</p>
         </div>

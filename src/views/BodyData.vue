@@ -5,8 +5,8 @@
       <div class="header-content">
         <div class="title-section">
           <h1 class="page-title">
-            <el-icon class="title-icon"><TrendCharts /></el-icon>
-            身体数据管理
+            <el-icon class="title-icon"><DataAnalysis /></el-icon>
+            身体数据
           </h1>
           <p class="subtitle">记录并追踪您的身体健康指标</p>
         </div>
@@ -31,7 +31,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ latestWeight || '--' }}</div>
-            <div class="stat-label">最新体重 (kg)</div>
+            <div class="stat-label">当前体重（kg）</div>
             <div class="stat-trend">
               目标体重: {{ healthGoals.targetWeight || '未设置' }}
               {{ healthGoals.targetWeight ? 'kg' : '' }}
@@ -47,7 +47,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ latestHeight || '--' }}</div>
-            <div class="stat-label">最新身高 (cm)</div>
+            <div class="stat-label">当前身高（cm）</div>
           </div>
         </div>
       </el-card>
@@ -116,7 +116,7 @@
         <div class="table-actions">
           <el-button size="small" @click="loadData" :loading="loading">
             <el-icon><Refresh /></el-icon>
-            刷新
+            <span> 刷新 </span>
           </el-button>
         </div>
       </div>
@@ -141,17 +141,17 @@
         </el-table-column>
         <el-table-column
           prop="heightCM"
-          label="身高(cm)"
+          label="身高（cm）"
           min-width="100"
           sortable
         />
         <el-table-column
           prop="weightKG"
-          label="体重(kg)"
+          label="体重（kg）"
           min-width="100"
           sortable
         />
-        <el-table-column prop="bmi" label="BMI指数" min-width="120" sortable>
+        <el-table-column prop="bmi" label="BMI 指数" min-width="120" sortable>
           <template #default="{ row }">
             <el-tag
               :type="getBMITagType(row.heightCM, row.weightKG)"
@@ -231,25 +231,31 @@
             style="width: 100%"
           />
         </el-form-item>
-        <el-form-item label="身高(cm)" prop="heightCM">
-          <el-input-number
-            v-model="form.heightCM"
-            :min="100"
-            :max="250"
-            :precision="1"
-            style="width: 100%"
-            controls-position="right"
-          />
+        <el-form-item label="身高" prop="heightCM">
+          <div class="input-with-unit">
+            <el-input-number
+              v-model="form.heightCM"
+              :min="100"
+              :max="250"
+              :precision="1"
+              style="width: 100%"
+              controls-position="right"
+            />
+            <span class="unit-text-number">cm</span>
+          </div>
         </el-form-item>
-        <el-form-item label="体重(kg)" prop="weightKG">
-          <el-input-number
-            v-model="form.weightKG"
-            :min="30"
-            :max="300"
-            :precision="1"
-            style="width: 100%"
-            controls-position="right"
-          />
+        <el-form-item label="体重" prop="weightKG">
+          <div class="input-with-unit">
+            <el-input-number
+              v-model="form.weightKG"
+              :min="30"
+              :max="300"
+              :precision="1"
+              style="width: 100%"
+              controls-position="right"
+            />
+            <span class="unit-text-number">kg</span>
+          </div>
         </el-form-item>
         <div v-if="form.heightCM > 0 && form.weightKG > 0" class="bmi-preview">
           <el-card class="bmi-card-preview">
@@ -278,7 +284,7 @@
             size="large"
           >
             <el-icon><Check /></el-icon>
-            确认
+            <span> 确认 </span>
           </el-button>
         </div>
       </template>
@@ -797,6 +803,12 @@ onUnmounted(() => {
   font-size: 3rem;
   margin-right: 20px;
   opacity: 0.9;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .stat-info {
@@ -1160,6 +1172,7 @@ onUnmounted(() => {
   margin: 0;
   border-bottom: none;
   position: relative;
+  border-radius: 25px 25px 0 0;
 }
 
 :deep(.form-dialog .el-dialog__header::after) {
@@ -1199,14 +1212,19 @@ onUnmounted(() => {
   height: 40px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.form-dialog .el-dialog__headerbtn:hover) {
   background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
   border-color: rgba(255, 255, 255, 0.5);
+  transform: none;
 }
 
 :deep(.form-dialog .el-dialog__close) {
@@ -1232,6 +1250,8 @@ onUnmounted(() => {
 .dialog-form :deep(.el-form-item) {
   margin-bottom: 24px;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-form-item__label) {
@@ -1239,7 +1259,17 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  min-height: 44px;
+}
+
+.dialog-form :deep(.el-form-item__content) {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-input__wrapper) {
@@ -1346,6 +1376,30 @@ onUnmounted(() => {
   padding: 2px 8px;
   border-radius: 6px;
   z-index: 10;
+}
+
+/* 数字输入框单位样式 */
+.input-with-unit {
+  position: relative;
+}
+
+.input-with-unit :deep(.el-input-number .el-input__wrapper) {
+  padding-right: 250px !important; /* 为单位文本和控制按钮留出空间，覆盖默认样式 */
+}
+
+.unit-text-number {
+  position: absolute;
+  right: 50px; /* 调整位置以匹配新的 padding 值 */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  z-index: 10;
+  pointer-events: none; /* 防止单位文本阻挡输入框交互 */
 }
 
 /* 分页样式美化 */

@@ -680,7 +680,6 @@ const loadCurrentData = async () => {
   try {
     const today = new Date().toISOString().split('T')[0]
 
-    // 获取最新体重
     const bodyResponse = await bodyDataApi.getList({
       page: 1,
       size: 1,

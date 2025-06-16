@@ -5,8 +5,8 @@
       <div class="header-content">
         <div class="title-section">
           <h1 class="page-title">
-            <el-icon class="title-icon"><TrendCharts /></el-icon>
-            健康数据概览
+            <el-icon class="title-icon"><Odometer /></el-icon>
+            数据概览
           </h1>
           <p class="subtitle">全面了解您的健康状况，追踪每日进展</p>
         </div>
@@ -46,7 +46,7 @@
             <div class="stat-value">
               {{ statistics.averageWeight.toFixed(1) }}
             </div>
-            <div class="stat-label">当前体重 (kg)</div>
+            <div class="stat-label">当前体重（kg）</div>
             <div class="stat-trend">
               目标体重: {{ healthGoals.targetWeight || '未设置' }}
               {{ healthGoals.targetWeight ? 'kg' : '' }}
@@ -62,7 +62,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.totalCaloriesConsumed }}</div>
-            <div class="stat-label">今日摄入卡路里</div>
+            <div class="stat-label">今日摄入卡路里（kcal）</div>
             <div class="stat-trend">
               目标摄入: {{ healthGoals.dailyCaloriesIntake || '未设置' }}
               {{ healthGoals.dailyCaloriesIntake ? 'kcal' : '' }}
@@ -78,7 +78,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.totalCaloriesBurned }}</div>
-            <div class="stat-label">今日消耗卡路里</div>
+            <div class="stat-label">今日消耗卡路里（kcal）</div>
             <div class="stat-trend">
               目标消耗: {{ healthGoals.dailyCaloriesBurn || '未设置' }}
               {{ healthGoals.dailyCaloriesBurn ? 'kcal' : '' }}
@@ -820,7 +820,6 @@ const refreshData = async () => {
     })
     if (bodyDataResponse.success && bodyDataResponse.data) {
       if (bodyDataResponse.data.rows.length > 0) {
-        // 显示今日最新体重，而不是平均值
         statistics.averageWeight = bodyDataResponse.data.rows[0].weightKG
       }
     }

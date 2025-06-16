@@ -31,7 +31,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ todayCalories }}</div>
-            <div class="stat-label">今日卡路里 (kcal)</div>
+            <div class="stat-label">今日摄入卡路里（kcal）</div>
             <div class="stat-trend">
               目标摄入: {{ healthGoals.dailyCaloriesIntake || '未设置' }}
               {{ healthGoals.dailyCaloriesIntake ? 'kcal' : '' }}
@@ -59,7 +59,7 @@
       <el-card class="stat-card snack-card">
         <div class="stat-content">
           <div class="stat-icon">
-            <el-icon><Bowl /></el-icon>
+            <el-icon><Food /></el-icon>
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ todaySnack }}</div>
@@ -131,7 +131,7 @@
         <div class="table-actions">
           <el-button size="small" @click="loadData" :loading="loading">
             <el-icon><Refresh /></el-icon>
-            刷新
+            <span> 刷新 </span>
           </el-button>
         </div>
       </div>
@@ -159,7 +159,7 @@
         <el-table-column prop="foodName" label="食物名称" min-width="150" />
         <el-table-column
           prop="estimatedCalories"
-          label="热量"
+          label="摄入热量（kcal）"
           min-width="100"
           sortable
         >
@@ -264,7 +264,7 @@
             style="width: 100%"
             controls-position="right"
           />
-          <span class="unit-text">大卡</span>
+          <span class="unit-text">kcal</span>
         </el-form-item>
 
         <!-- 热量等级提示 -->
@@ -292,7 +292,7 @@
             size="large"
           >
             <el-icon><Check /></el-icon>
-            确认
+            <span> 确认 </span>
           </el-button>
         </div>
       </template>
@@ -634,7 +634,7 @@ const rules = {
       type: 'number',
       min: 0,
       max: 2000,
-      message: '热量范围应在0到2000大卡之间',
+      message: '热量范围应在 0 到 2000 大卡之间',
       trigger: 'blur',
     },
   ],
@@ -844,6 +844,12 @@ onUnmounted(() => {
   font-size: 3rem;
   margin-right: 20px;
   opacity: 0.9;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .stat-info {
@@ -1204,6 +1210,7 @@ onUnmounted(() => {
   margin: 0;
   border-bottom: none;
   position: relative;
+  border-radius: 25px 25px 0 0;
 }
 
 :deep(.form-dialog .el-dialog__header::after) {
@@ -1243,14 +1250,19 @@ onUnmounted(() => {
   height: 40px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.form-dialog .el-dialog__headerbtn:hover) {
   background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
   border-color: rgba(255, 255, 255, 0.5);
+  transform: none;
 }
 
 :deep(.form-dialog .el-dialog__close) {
@@ -1276,6 +1288,8 @@ onUnmounted(() => {
 .dialog-form :deep(.el-form-item) {
   margin-bottom: 24px;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-form-item__label) {
@@ -1283,7 +1297,17 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  min-height: 44px;
+}
+
+.dialog-form :deep(.el-form-item__content) {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-input__wrapper) {

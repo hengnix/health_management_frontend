@@ -31,7 +31,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ todayStats.totalCalories }}</div>
-            <div class="stat-label">今日消耗卡路里</div>
+            <div class="stat-label">今日消耗卡路里（kcal）</div>
             <div class="stat-trend">
               目标消耗: {{ healthGoals.dailyCaloriesBurn || '未设置' }}
               {{ healthGoals.dailyCaloriesBurn ? 'kcal' : '' }}
@@ -47,8 +47,7 @@
           </div>
           <div class="stat-info">
             <div class="stat-value">{{ todayStats.totalDuration }}</div>
-            <div class="stat-label">今日运动时长 (分钟)</div>
-            <div class="stat-trend">累计锻炼</div>
+            <div class="stat-label">今日运动时长（min）</div>
           </div>
         </div>
       </el-card>
@@ -61,7 +60,6 @@
           <div class="stat-info">
             <div class="stat-value">{{ todayStats.exerciseCount }}</div>
             <div class="stat-label">今日运动次数</div>
-            <div class="stat-trend">坚持锻炼</div>
           </div>
         </div>
       </el-card>
@@ -134,7 +132,7 @@
         <div class="table-actions">
           <el-button size="small" @click="loadData" :loading="loading">
             <el-icon><Refresh /></el-icon>
-            刷新
+            <span> 刷新 </span>
           </el-button>
         </div>
       </div>
@@ -170,7 +168,7 @@
         </el-table-column>
         <el-table-column
           prop="durationMinutes"
-          label="时长(分钟)"
+          label="时长（min）"
           min-width="120"
           sortable
         >
@@ -180,7 +178,7 @@
         </el-table-column>
         <el-table-column
           prop="estimatedCaloriesBurned"
-          label="消耗热量"
+          label="消耗热量（kcal）"
           min-width="120"
           sortable
         >
@@ -285,7 +283,7 @@
             style="width: 100%"
             controls-position="right"
           />
-          <span class="unit-text">分钟</span>
+          <span class="unit-text">min</span>
         </el-form-item>
 
         <el-form-item label="消耗热量" prop="estimatedCaloriesBurned">
@@ -297,7 +295,7 @@
             style="width: 100%"
             controls-position="right"
           />
-          <span class="unit-text">大卡</span>
+          <span class="unit-text">kcal</span>
         </el-form-item>
 
         <!-- 运动强度提示 -->
@@ -325,7 +323,7 @@
             size="large"
           >
             <el-icon><Check /></el-icon>
-            确认
+            <span> 确认 </span>
           </el-button>
         </div>
       </template>
@@ -850,6 +848,12 @@ onUnmounted(() => {
   font-size: 3rem;
   margin-right: 20px;
   opacity: 0.9;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .stat-info {
@@ -866,11 +870,6 @@ onUnmounted(() => {
   font-size: 1rem;
   opacity: 0.9;
   margin-bottom: 5px;
-}
-
-.stat-trend {
-  font-size: 0.9rem;
-  opacity: 0.8;
 }
 
 .filter-card,
@@ -1217,6 +1216,7 @@ onUnmounted(() => {
   margin: 0;
   border-bottom: none;
   position: relative;
+  border-radius: 25px 25px 0 0;
 }
 
 :deep(.form-dialog .el-dialog__header::after) {
@@ -1256,14 +1256,19 @@ onUnmounted(() => {
   height: 40px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.form-dialog .el-dialog__headerbtn:hover) {
   background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
   border-color: rgba(255, 255, 255, 0.5);
+  transform: none;
 }
 
 :deep(.form-dialog .el-dialog__close) {
@@ -1289,6 +1294,8 @@ onUnmounted(() => {
 .dialog-form :deep(.el-form-item) {
   margin-bottom: 24px;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-form-item__label) {
@@ -1296,7 +1303,17 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  min-height: 44px;
+}
+
+.dialog-form :deep(.el-form-item__content) {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .dialog-form :deep(.el-input__wrapper) {
