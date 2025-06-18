@@ -205,7 +205,8 @@
           v-model:current-page="pagination.currentPage"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="sizes, prev, pager, next, jumper"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           class="pagination"
@@ -325,6 +326,7 @@ const showDialog = ref(false)
 const submitting = ref(false)
 const editingRecord = ref<Diet | null>(null)
 const formRef = ref<FormInstance>()
+const total = ref(0)
 
 // 分页配置
 const pagination = reactive({
@@ -350,7 +352,10 @@ const todayCalories = computed(() => {
   const today = new Date().toISOString().split('T')[0]
   return dietList.value
     .filter((diet) => diet.recordDate === today)
-    .reduce((sum, diet) => sum + (diet.calories || 0), 0)
+    .reduce(
+      (sum, diet) => sum + (diet.estimatedCalories || diet.calories || 0),
+      0,
+    )
 })
 
 // 今日各餐类型统计
@@ -489,6 +494,7 @@ const loadData = async () => {
         (a, b) =>
           new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
       )
+      total.value = response.data.total || response.data.rows.length
     }
   } catch (error: unknown) {
     console.error('加载数据失败:', error)

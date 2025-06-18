@@ -51,6 +51,7 @@
                     :src="userInfo.avatarUrl"
                     alt="用户头像"
                     class="avatar-image"
+                    @error="handleProfileAvatarError"
                   />
                   <div v-else class="avatar-placeholder">
                     <el-icon size="50"><User /></el-icon>
@@ -416,6 +417,14 @@ const avatarLoading = ref(false)
 // 头像相关
 const avatarInput = ref<HTMLInputElement>()
 
+// 头像加载错误处理
+const handleProfileAvatarError = (event: Event) => {
+  // 头像加载失败时，清空 avatarUrl 以显示默认头像图标
+  const img = event.target as HTMLImageElement
+  console.warn('个人资料页头像加载失败:', img.src)
+  userInfo.avatarUrl = ''
+}
+
 // 当前体重、今日卡路里摄入和今日卡路里消耗（用于计算进度）
 const currentWeight = ref<number | null>(null)
 const todayCalories = ref<number>(0)
@@ -556,8 +565,10 @@ const performUpload = async (file: File, target: HTMLInputElement) => {
 
     if (response.success && response.data) {
       ElMessage.success('头像上传成功！')
-      // 重新加载头像
+      // 重新加载头像并更新 store
       await loadAvatar()
+      // 同时更新 userStore 中的头像
+      await userStore.updateAvatar()
     } else {
       // 根据服务器返回的错误信息显示更具体的错误
       const errorMessage = response.message || '头像上传失败，请稍后重试'
@@ -636,10 +647,22 @@ const loadAvatar = async () => {
       userInfo.avatarUrl = response.avatarUrl
       console.log('头像 URL 设置为:', userInfo.avatarUrl)
     } else {
-      console.log('获取头像响应无数据:', response)
+      console.log('获取头像响应无数据，使用默认头像')
+      userInfo.avatarUrl = ''
     }
   } catch (error: unknown) {
     console.error('加载头像失败:', error)
+    // 如果是 404 错误，说明用户没有头像，这是正常情况
+    if (error && typeof error === 'object' && 'response' in error) {
+      const apiError = error as { response?: { status?: number } }
+      if (apiError.response?.status === 404) {
+        console.log('用户未设置头像 (404)，使用默认头像')
+        userInfo.avatarUrl = ''
+        return
+      }
+    }
+    // 其他错误也使用默认头像
+    userInfo.avatarUrl = ''
   }
 }
 

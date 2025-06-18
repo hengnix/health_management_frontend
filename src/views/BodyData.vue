@@ -199,7 +199,8 @@
           v-model:current-page="pagination.currentPage"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="sizes, prev, pager, next, jumper"
+          :total="total"
+          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           class="pagination"
@@ -322,6 +323,7 @@ const showDialog = ref(false)
 const submitting = ref(false)
 const editingRecord = ref<BodyData | null>(null)
 const formRef = ref<FormInstance>()
+const total = ref(0)
 
 // 分页配置
 const pagination = reactive({
@@ -446,6 +448,8 @@ const loadData = async () => {
             new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
         )
 
+      total.value = response.data.total || response.data.rows.length
+
       console.log('Loaded body data:', bodyDataList.value) // 添加调试日志
     }
   } catch (error) {
@@ -547,6 +551,7 @@ const deleteRecord = async (id: number) => {
 
 const handleSizeChange = (size: number) => {
   pagination.pageSize = size
+  pagination.currentPage = 1
   loadData()
 }
 

@@ -202,10 +202,29 @@ export const useUserStore = defineStore('user', () => {
         avatarUrl.value = response.avatarUrl
         console.log('头像获取成功:', response.avatarUrl)
         return true
+      } else {
+        // 用户没有设置头像，清空头像 URL
+        if (avatarUrl.value && avatarUrl.value.startsWith('blob:')) {
+          URL.revokeObjectURL(avatarUrl.value)
+        }
+        avatarUrl.value = null
+        console.log('用户未设置头像')
+        return false
       }
-      return false
-    } catch (error) {
+    } catch (error: unknown) {
       console.warn('获取头像失败:', error)
+      // 如果是 404 错误，说明用户没有头像，这是正常情况
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as { response?: { status?: number } }
+        if (apiError.response?.status === 404) {
+          if (avatarUrl.value && avatarUrl.value.startsWith('blob:')) {
+            URL.revokeObjectURL(avatarUrl.value)
+          }
+          avatarUrl.value = null
+          console.log('用户未设置头像 (404)')
+          return false
+        }
+      }
       return false
     }
   }
@@ -333,6 +352,11 @@ export const useUserStore = defineStore('user', () => {
     console.log('=====================')
   }
 
+  // 更新头像（上传头像后调用）
+  const updateAvatar = async () => {
+    return await fetchAvatar()
+  }
+
   return {
     user,
     token,
@@ -342,6 +366,7 @@ export const useUserStore = defineStore('user', () => {
     register,
     fetchUserProfile,
     fetchAvatar,
+    updateAvatar,
     updateProfile,
     logout,
     init,

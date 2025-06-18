@@ -101,6 +101,7 @@
                       :src="userStore.avatarUrl"
                       alt="用户头像"
                       class="avatar-image"
+                      @error="handleAvatarError"
                     />
                     <el-icon v-else><User /></el-icon>
                   </el-avatar>
@@ -157,6 +158,13 @@ const isFullScreenPage = computed(
 
 const goToProfile = () => {
   router.push('/profile')
+}
+
+const handleAvatarError = (event: Event) => {
+  // 头像加载失败时，清空 avatarUrl 以显示默认头像图标
+  const img = event.target as HTMLImageElement
+  console.warn('侧边栏头像加载失败:', img.src)
+  userStore.avatarUrl = null
 }
 </script>
 

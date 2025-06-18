@@ -263,15 +263,26 @@ export const userApi = {
       return Promise.reject(new Error('未登录'))
     }
 
-    // 获取二进制图片数据并转换为 blob URL
-    const response = await api.get('/getAvatar', {
-      headers: { token },
-      responseType: 'blob', // 指定响应类型为 blob
-    })
-    // 创建 blob URL
-    const blob = new Blob([response.data], { type: 'image/jpeg' })
-    const avatarUrl = URL.createObjectURL(blob)
-    return { avatarUrl }
+    try {
+      // 获取二进制图片数据并转换为 blob URL
+      const response = await api.get('/getAvatar', {
+        headers: { token },
+        responseType: 'blob', // 指定响应类型为 blob
+      })
+
+      // 检查响应是否有效
+      if (!response.data || response.data.size === 0) {
+        throw new Error('头像数据为空')
+      }
+
+      // 创建 blob URL
+      const blob = new Blob([response.data], { type: 'image/jpeg' })
+      const avatarUrl = URL.createObjectURL(blob)
+      return { avatarUrl }
+    } catch (error: unknown) {
+      // 重新抛出错误，保持原始的错误信息
+      throw error
+    }
   },
 }
 
