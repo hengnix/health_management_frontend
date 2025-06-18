@@ -1,8 +1,11 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: ['main']
+  p      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Build
+        run: pnpm run build    branches: ['main']
   workflow_dispatch:
 
 permissions:
