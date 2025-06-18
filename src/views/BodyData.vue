@@ -13,7 +13,7 @@
         <el-button
           type="primary"
           size="large"
-          @click="showDialog = true"
+          @click="openAddDialog"
           class="add-btn"
         >
           <el-icon><Plus /></el-icon>
@@ -33,8 +33,13 @@
             <div class="stat-value">{{ latestWeight || '--' }}</div>
             <div class="stat-label">当前体重（kg）</div>
             <div class="stat-trend">
-              目标体重: {{ healthGoals.targetWeight || '未设置' }}
-              {{ healthGoals.targetWeight ? 'kg' : '' }}
+              <div v-if="latestBodyData?.recordDate" class="latest-date">
+                记录日期: {{ formatDate(latestBodyData.recordDate) }}
+              </div>
+              <div>
+                目标体重: {{ healthGoals.targetWeight || '未设置' }}
+                {{ healthGoals.targetWeight ? 'kg' : '' }}
+              </div>
             </div>
           </div>
         </div>
@@ -48,6 +53,9 @@
           <div class="stat-info">
             <div class="stat-value">{{ latestHeight || '--' }}</div>
             <div class="stat-label">当前身高（cm）</div>
+            <div v-if="latestBodyData?.recordDate" class="stat-trend">
+              记录日期: {{ formatDate(latestBodyData.recordDate) }}
+            </div>
           </div>
         </div>
       </el-card>
@@ -62,6 +70,9 @@
             <div class="stat-label">BMI 指数</div>
             <div class="bmi-status" :class="bmiStatusClass">
               {{ bmiStatus }}
+            </div>
+            <div v-if="latestBodyData?.recordDate" class="stat-trend">
+              记录日期: {{ formatDate(latestBodyData.recordDate) }}
             </div>
           </div>
         </div>
@@ -126,6 +137,7 @@
         v-loading="loading"
         class="data-table"
         stripe
+        :default-sort="{ prop: 'recordDate', order: 'descending' }"
       >
         <el-table-column
           prop="recordDate"
@@ -239,6 +251,9 @@
               :min="100"
               :max="250"
               :precision="1"
+              :placeholder="
+                latestHeight ? `当前: ${latestHeight}cm` : '请输入身高'
+              "
               style="width: 100%"
               controls-position="right"
             />
@@ -252,6 +267,9 @@
               :min="30"
               :max="300"
               :precision="1"
+              :placeholder="
+                latestWeight ? `当前: ${latestWeight}kg` : '请输入体重'
+              "
               style="width: 100%"
               controls-position="right"
             />
@@ -318,6 +336,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const bodyDataList = ref<BodyData[]>([])
+const latestBodyData = ref<BodyData | null>(null) // 专门存储最新的身体数据
 const loading = ref(false)
 const showDialog = ref(false)
 const submitting = ref(false)
@@ -342,13 +361,13 @@ const form = reactive({
   weightKG: 65,
 })
 
-// 计算属性
+// 计算属性（基于最新数据）
 const latestWeight = computed(() => {
-  return bodyDataList.value.length > 0 ? bodyDataList.value[0].weightKG : null
+  return latestBodyData.value?.weightKG || null
 })
 
 const latestHeight = computed(() => {
-  return bodyDataList.value.length > 0 ? bodyDataList.value[0].heightCM : null
+  return latestBodyData.value?.heightCM || null
 })
 
 const latestBMI = computed(() => {
@@ -409,6 +428,65 @@ const formatDateForAPI = (dateStr: string) => {
   return dateStr
 }
 
+// 从当前数据列表中更新最新身体数据（当前页是第一页且数据已排序时）
+const updateLatestDataFromList = () => {
+  if (bodyDataList.value.length > 0 && pagination.currentPage === 1) {
+    // 第一页的第一条数据就是最新的（后端已排序）
+    latestBodyData.value = bodyDataList.value[0]
+    console.log(
+      'Latest body data updated from list (第一页第一条):',
+      latestBodyData.value,
+    )
+  }
+}
+
+// 专门加载最新身体数据的函数
+const loadLatestData = async () => {
+  try {
+    // 获取所有数据的第一页，但设置较大的 pageSize，并且不传筛选条件
+    // 这样可以确保获取到全局最新的数据
+    const response = await bodyDataApi.getList({
+      page: 1,
+      size: 50, // 获取足够多的数据确保包含最新记录
+      // 不传 startDate 和 endDate，获取所有数据
+    })
+
+    if (response.success && response.data && response.data.rows.length > 0) {
+      // 从所有数据中找到日期最新的记录
+      const allData = response.data.rows
+        .map(
+          (item: ApiBodyDataRow): BodyData => ({
+            bodyMetricID: item.BodyMetricID || item.bodyMetricID || 0,
+            userID: item.UserID || item.userID || '',
+            heightCM: item.HeightCM || item.heightCM || 0,
+            weightKG: item.WeightKG || item.weightKG || 0,
+            recordDate: item.RecordDate || item.recordDate || '',
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+          }),
+        )
+        .filter((item) => item.recordDate)
+
+      if (allData.length > 0) {
+        // 按日期排序找到最新的
+        const sortedData = allData.sort(
+          (a, b) =>
+            new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
+        )
+        latestBodyData.value = sortedData[0]
+        console.log('Latest body data loaded (全局最新):', latestBodyData.value)
+      } else {
+        latestBodyData.value = null
+      }
+    } else {
+      latestBodyData.value = null
+    }
+  } catch (error) {
+    console.error('Failed to load latest data:', error)
+    latestBodyData.value = null
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
@@ -419,38 +497,32 @@ const loadData = async () => {
       size: pagination.pageSize,
     }
 
-    console.log('发送的日期参数:', {
-      startDate: params.startDate,
-      endDate: params.endDate,
-      原始startDate: filterForm.startDate,
-      原始endDate: filterForm.endDate,
-    }) // 添加调试日志
+    console.log('发送的参数:', params) // 添加调试日志
 
     const response = await bodyDataApi.getList(params)
     if (response.success && response.data) {
       // 处理字段名不匹配问题：将 API 返回的大写字段名转换为小写
-      const normalizedData = response.data.rows.map(
-        (item: ApiBodyDataRow): BodyData => ({
-          bodyMetricID: item.BodyMetricID || item.bodyMetricID || 0,
-          userID: item.UserID || item.userID || '',
-          heightCM: item.HeightCM || item.heightCM || 0,
-          weightKG: item.WeightKG || item.weightKG || 0,
-          recordDate: item.RecordDate || item.recordDate || '',
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-        }),
-      )
+      const normalizedData = response.data.rows
+        .map(
+          (item: ApiBodyDataRow): BodyData => ({
+            bodyMetricID: item.BodyMetricID || item.bodyMetricID || 0,
+            userID: item.UserID || item.userID || '',
+            heightCM: item.HeightCM || item.heightCM || 0,
+            weightKG: item.WeightKG || item.weightKG || 0,
+            recordDate: item.RecordDate || item.recordDate || '',
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+          }),
+        )
+        .filter((item) => item.recordDate) // 只过滤掉没有日期的记录
 
       bodyDataList.value = normalizedData
-        .filter((item) => item.recordDate) // 过滤掉没有日期的记录
-        .sort(
-          (a, b) =>
-            new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
-        )
-
       total.value = response.data.total || response.data.rows.length
 
-      console.log('Loaded body data:', bodyDataList.value) // 添加调试日志
+      // 只在第一页时更新最新数据（因为后端已按日期降序排序）
+      updateLatestDataFromList()
+
+      console.log('Loaded body data (后端已排序):', bodyDataList.value)
     }
   } catch (error) {
     console.error('Failed to load data:', error) // 添加错误日志
@@ -463,17 +535,53 @@ const loadData = async () => {
 const resetFilter = () => {
   filterForm.startDate = ''
   filterForm.endDate = ''
+
+  // 重置到第一页
+  pagination.currentPage = 1
+
   loadData()
+  loadLatestData() // 重置筛选后需要重新加载最新数据
+}
+
+// 工具函数：获取本地日期字符串（YYYY-MM-DD 格式）
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 const resetForm = () => {
   Object.assign(form, {
-    recordDate: new Date().toISOString().split('T')[0],
+    recordDate: getLocalDateString(), // 修复时区问题
     heightCM: 0,
     weightKG: 0,
   })
   editingRecord.value = null
   formRef.value?.clearValidate()
+}
+
+// 打开新增对话框
+const openAddDialog = () => {
+  // 重置表单
+  resetForm()
+
+  // 使用统计卡片的最新数据作为默认值
+  if (latestHeight.value && latestWeight.value) {
+    form.heightCM = latestHeight.value
+    form.weightKG = latestWeight.value
+    console.log('使用统计卡片数据作为默认值:', {
+      height: latestHeight.value,
+      weight: latestWeight.value,
+    })
+  } else {
+    // 如果没有最新数据，使用系统默认值
+    form.heightCM = 170
+    form.weightKG = 65
+    console.log('使用系统默认值')
+  }
+
+  showDialog.value = true
 }
 
 const editRecord = (record: BodyData) => {
@@ -512,6 +620,7 @@ const submitForm = async () => {
         showDialog.value = false
         resetForm()
         loadData()
+        await loadLatestData() // 更新后需要重新获取最新数据
       }
     } else {
       const response = await bodyDataApi.create(formData)
@@ -519,7 +628,13 @@ const submitForm = async () => {
         ElMessage.success('添加成功')
         showDialog.value = false
         resetForm()
-        loadData()
+
+        // 添加新记录后跳转到第一页以查看最新记录
+        pagination.currentPage = 1
+
+        // 重新加载数据
+        await loadData()
+        await loadLatestData() // 添加新记录后需要重新获取最新数据
       }
     }
   } catch (error: unknown) {
@@ -539,7 +654,13 @@ const deleteRecord = async (id: number) => {
     const response = await bodyDataApi.delete(id)
     if (response.success) {
       ElMessage.success('删除成功')
-      loadData()
+
+      // 检查当前页是否还有数据，如果没有则回到上一页
+      if (bodyDataList.value.length === 1 && pagination.currentPage > 1) {
+        pagination.currentPage = pagination.currentPage - 1
+      }
+      await loadData()
+      await loadLatestData() // 删除后需要重新获取最新数据
     }
   } catch (error: unknown) {
     const apiError = error as ApiError
@@ -561,6 +682,7 @@ const handleCurrentChange = (page: number) => {
 }
 
 const handleFilterChange = () => {
+  // 筛选条件变化时回到第一页
   pagination.currentPage = 1
   loadData()
 }
@@ -575,7 +697,7 @@ const rules = {
       type: 'number',
       min: 100,
       max: 250,
-      message: '身高应在100-250cm之间',
+      message: '身高应在 100-250 cm 之间',
       trigger: 'blur',
     },
   ],
@@ -585,7 +707,7 @@ const rules = {
       type: 'number',
       min: 30,
       max: 300,
-      message: '体重应在30-300kg之间',
+      message: '体重应在 30-300 kg 之间',
       trigger: 'blur',
     },
   ],
@@ -612,11 +734,14 @@ const getBMIStatus = (height: number, weight: number) => {
 const handleVisibilityChange = () => {
   if (!document.hidden) {
     loadHealthGoals()
+    loadData() // 当页面重新可见时，刷新数据
+    loadLatestData() // 同时刷新最新数据
   }
 }
 
 onMounted(() => {
   loadData()
+  loadLatestData() // 初始加载最新数据
   resetForm()
   loadHealthGoals()
 

@@ -13,7 +13,7 @@
         <el-button
           type="primary"
           size="large"
-          @click="showDialog = true"
+          @click="openAddDialog"
           class="add-btn"
         >
           <el-icon><Plus /></el-icon>
@@ -139,7 +139,7 @@
       <el-table :data="dietList" v-loading="loading" class="data-table" stripe>
         <el-table-column
           prop="recordDate"
-          label="日期"
+          label="记录日期"
           min-width="120"
           sortable
         >
@@ -321,6 +321,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const dietList = ref<Diet[]>([])
+const todayDietList = ref<Diet[]>([]) // 专门存储今日数据，不受分页影响
 const loading = ref(false)
 const showDialog = ref(false)
 const submitting = ref(false)
@@ -347,51 +348,36 @@ const form = reactive({
   estimatedCalories: 0,
 })
 
-// 计算属性 - 今日统计
+// 计算属性 - 今日统计（基于专门的今日数据）
 const todayCalories = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return dietList.value
-    .filter((diet) => diet.recordDate === today)
-    .reduce(
-      (sum, diet) => sum + (diet.estimatedCalories || diet.calories || 0),
-      0,
-    )
+  return todayDietList.value.reduce(
+    (sum, diet) => sum + (diet.estimatedCalories || diet.calories || 0),
+    0,
+  )
 })
 
 // 今日各餐类型统计
 const todayBreakfast = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return dietList.value.filter(
-    (diet) =>
-      diet.recordDate === today &&
-      (diet.mealType === 'breakfast' || diet.mealType === '早餐'),
+  return todayDietList.value.filter(
+    (diet) => diet.mealType === 'breakfast' || diet.mealType === '早餐',
   ).length
 })
 
 const todayLunch = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return dietList.value.filter(
-    (diet) =>
-      diet.recordDate === today &&
-      (diet.mealType === 'lunch' || diet.mealType === '午餐'),
+  return todayDietList.value.filter(
+    (diet) => diet.mealType === 'lunch' || diet.mealType === '午餐',
   ).length
 })
 
 const todayDinner = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return dietList.value.filter(
-    (diet) =>
-      diet.recordDate === today &&
-      (diet.mealType === 'dinner' || diet.mealType === '晚餐'),
+  return todayDietList.value.filter(
+    (diet) => diet.mealType === 'dinner' || diet.mealType === '晚餐',
   ).length
 })
 
 const todaySnack = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return dietList.value.filter(
-    (diet) =>
-      diet.recordDate === today &&
-      (diet.mealType === 'snack' || diet.mealType === '加餐'),
+  return todayDietList.value.filter(
+    (diet) => diet.mealType === 'snack' || diet.mealType === '加餐',
   ).length
 })
 
@@ -477,6 +463,38 @@ const getCalorieTagType = () => {
   }
 }
 
+// 工具函数：获取本地日期字符串（YYYY-MM-DD 格式）
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// 专门加载今日数据的函数，不受分页影响
+const loadTodayData = async () => {
+  try {
+    // 修复时区问题：使用本地时间而不是 UTC 时间
+    const todayLocal = getLocalDateString()
+
+    const params = {
+      startDate: todayLocal,
+      endDate: todayLocal,
+      page: 1,
+      pageSize: 1000, // 设置足够大的数量确保获取今日所有数据
+    }
+
+    console.log('Loading today data for date (local time):', todayLocal) // 添加调试日志
+    const response = await dietApi.getList(params)
+    if (response.success && response.data) {
+      todayDietList.value = response.data.rows || []
+      console.log('Today diet data loaded:', todayDietList.value) // 添加调试日志
+    }
+  } catch (error: unknown) {
+    console.error('加载今日数据失败:', error)
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
@@ -490,11 +508,10 @@ const loadData = async () => {
 
     const response = await dietApi.getList(params)
     if (response.success && response.data) {
-      dietList.value = response.data.rows.sort(
-        (a, b) =>
-          new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
-      )
+      // 后端已经排序好了，不需要前端再次排序
+      dietList.value = response.data.rows
       total.value = response.data.total || response.data.rows.length
+      console.log('Diet data loaded (backend sorted):', dietList.value) // 添加调试日志
     }
   } catch (error: unknown) {
     console.error('加载数据失败:', error)
@@ -512,17 +529,27 @@ const resetFilter = () => {
   })
   pagination.currentPage = 1
   loadData()
+  loadTodayData() // 重新加载今日数据
 }
 
 const resetForm = () => {
+  // 修复时区问题：使用本地时间而不是 UTC 时间
+  const todayLocal = getLocalDateString()
+
   Object.assign(form, {
-    recordDate: new Date().toISOString().split('T')[0],
+    recordDate: todayLocal,
     mealType: '',
     foodName: '',
     estimatedCalories: 0,
   })
   editingRecord.value = null
   formRef.value?.clearValidate()
+}
+
+// 打开新增对话框
+const openAddDialog = () => {
+  resetForm()
+  showDialog.value = true
 }
 
 const editRecord = (record: Diet) => {
@@ -575,6 +602,7 @@ const submitForm = async () => {
         showDialog.value = false
         resetForm()
         loadData()
+        loadTodayData() // 更新今日数据
       }
     } else {
       const response = await dietApi.create(formData)
@@ -582,7 +610,10 @@ const submitForm = async () => {
         ElMessage.success('添加成功')
         showDialog.value = false
         resetForm()
+        // 添加新记录后，跳转到第一页以查看最新记录
+        pagination.currentPage = 1
         loadData()
+        loadTodayData() // 更新今日数据
       }
     }
   } catch (error: unknown) {
@@ -603,6 +634,7 @@ const deleteRecord = async (id: number) => {
     if (response.success) {
       ElMessage.success('删除成功')
       loadData()
+      loadTodayData() // 更新今日数据
     }
   } catch (error: unknown) {
     const apiError = error as import('@/types').ApiError
@@ -626,6 +658,8 @@ const handleCurrentChange = (page: number) => {
 const handleFilterChange = () => {
   pagination.currentPage = 1
   loadData()
+  // 如果筛选条件会影响今日数据显示，也需要重新加载今日数据
+  // 但通常筛选不应该影响今日统计，所以这里可以不调用 loadTodayData()
 }
 
 const rules = {
@@ -650,11 +684,13 @@ const rules = {
 const handleVisibilityChange = () => {
   if (!document.hidden) {
     loadHealthGoals()
+    loadTodayData() // 当页面重新可见时，刷新今日数据
   }
 }
 
 onMounted(() => {
   loadData()
+  loadTodayData() // 初始加载今日数据
   resetForm()
   loadHealthGoals()
 

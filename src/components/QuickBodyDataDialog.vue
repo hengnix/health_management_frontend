@@ -166,6 +166,14 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+// 工具函数：获取本地日期字符串（YYYY-MM-DD 格式）
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const visible = ref(false)
 const submitting = ref(false)
 const formRef = ref<FormInstance>()
@@ -173,7 +181,7 @@ const formRef = ref<FormInstance>()
 const form = reactive({
   heightCM: 170,
   weightKG: 65,
-  recordDate: new Date().toISOString().split('T')[0],
+  recordDate: getLocalDateString(), // 修复时区问题
 })
 
 // 日期快捷选项
@@ -331,7 +339,7 @@ const loadLatestData = async () => {
       Object.assign(form, {
         heightCM: latestRecord.heightCM || 170,
         weightKG: latestRecord.weightKG || 65,
-        recordDate: new Date().toISOString().split('T')[0],
+        recordDate: getLocalDateString(), // 修复时区问题
       })
     } else {
       resetFormWithDefaults()
@@ -348,7 +356,7 @@ const resetFormWithDefaults = () => {
   Object.assign(form, {
     heightCM: 170,
     weightKG: 65,
-    recordDate: new Date().toISOString().split('T')[0],
+    recordDate: getLocalDateString(), // 修复时区问题
   })
 }
 

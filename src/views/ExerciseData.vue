@@ -13,7 +13,7 @@
         <el-button
           type="primary"
           size="large"
-          @click="showDialog = true"
+          @click="openAddDialog"
           class="add-btn"
         >
           <el-icon><Plus /></el-icon>
@@ -352,6 +352,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const exerciseList = ref<ExerciseRecord[]>([])
+const todayExerciseList = ref<ExerciseRecord[]>([]) // 专门存储今日运动数据
 const loading = ref(false)
 const showDialog = ref(false)
 const submitting = ref(false)
@@ -398,21 +399,16 @@ const rules = {
 }
 
 const todayStats = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  const todayRecords = exerciseList.value.filter(
-    (record: ExerciseRecord) => record.recordDate === today,
-  )
-
-  const totalCalories = todayRecords.reduce(
+  const totalCalories = todayExerciseList.value.reduce(
     (sum: number, record: ExerciseRecord) =>
       sum + (record.estimatedCaloriesBurned || 0),
     0,
   )
-  const totalDuration = todayRecords.reduce(
+  const totalDuration = todayExerciseList.value.reduce(
     (sum: number, record: ExerciseRecord) => sum + record.durationMinutes,
     0,
   )
-  const exerciseCount = todayRecords.length
+  const exerciseCount = todayExerciseList.value.length
 
   return {
     totalCalories,
@@ -457,6 +453,36 @@ const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('zh-CN')
 }
 
+// 工具函数：获取本地日期字符串（YYYY-MM-DD 格式）
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// 专门加载今日运动数据的函数，不受分页影响
+const loadTodayData = async () => {
+  try {
+    const today = getLocalDateString() // 修复时区问题
+    const params = {
+      startDate: today,
+      endDate: today,
+      page: 1,
+      size: 1000, // 设置足够大的数量确保获取今日所有数据
+    }
+
+    console.log('Loading today exercise data for date (local time):', today) // 添加调试日志
+    const response = await exerciseApi.getList(params)
+    if (response.success && response.data) {
+      todayExerciseList.value = response.data.rows || []
+      console.log('Today exercise data loaded:', todayExerciseList.value) // 添加调试日志
+    }
+  } catch (error: unknown) {
+    console.error('加载今日运动数据失败:', error)
+  }
+}
+
 // 加载数据（支持分页和筛选）
 const loadData = async () => {
   loading.value = true
@@ -471,11 +497,10 @@ const loadData = async () => {
 
     const response = await exerciseApi.getList(params)
     if (response.success && response.data) {
-      exerciseList.value = response.data.rows.sort(
-        (a, b) =>
-          new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
-      )
+      // 后端已经排序好了，不需要前端再次排序
+      exerciseList.value = response.data.rows
       total.value = response.data.total || response.data.rows.length
+      console.log('Exercise data loaded (backend sorted):', exerciseList.value) // 添加调试日志
     }
   } catch (error: unknown) {
     console.error('加载数据失败:', error)
@@ -510,17 +535,24 @@ const resetFilter = () => {
   filterForm.exerciseType = ''
   pagination.currentPage = 1
   loadData()
+  loadTodayData() // 重新加载今日数据
 }
 
 const resetForm = () => {
   Object.assign(form, {
-    recordDate: new Date().toISOString().split('T')[0],
+    recordDate: getLocalDateString(), // 修复时区问题
     exerciseType: '',
     durationMinutes: 0,
     estimatedCaloriesBurned: undefined,
   })
   editingRecord.value = null
   formRef.value?.clearValidate()
+}
+
+// 打开新增对话框
+const openAddDialog = () => {
+  resetForm()
+  showDialog.value = true
 }
 
 const editRecord = (record: ExerciseRecord) => {
@@ -570,6 +602,7 @@ const submitForm = async () => {
         showDialog.value = false
         resetForm()
         loadData()
+        loadTodayData() // 更新今日数据
       } else {
         throw new Error(response.message || '更新失败')
       }
@@ -579,7 +612,10 @@ const submitForm = async () => {
         ElMessage.success('添加成功')
         showDialog.value = false
         resetForm()
+        // 添加新记录后，跳转到第一页以查看最新记录
+        pagination.currentPage = 1
         loadData()
+        loadTodayData() // 更新今日数据
       } else {
         throw new Error(response.message || '添加失败')
       }
@@ -611,6 +647,7 @@ const deleteRecord = async (id: number) => {
         pagination.currentPage--
       }
       loadData()
+      loadTodayData() // 更新今日数据
     }
   } catch (error: unknown) {
     const apiError = error as import('@/types').ApiError
@@ -648,11 +685,13 @@ const getIntensityTagType = () => {
 const handleVisibilityChange = () => {
   if (!document.hidden) {
     loadHealthGoals()
+    loadTodayData() // 当页面重新可见时，刷新今日数据
   }
 }
 
 onMounted(() => {
   loadData()
+  loadTodayData() // 初始加载今日数据
   resetForm()
   loadHealthGoals()
 

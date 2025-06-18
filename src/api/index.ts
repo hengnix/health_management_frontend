@@ -294,6 +294,8 @@ export const bodyDataApi = {
     size?: number
     startDate?: string
     endDate?: string
+    sortBy?: string
+    sortOrder?: string
   }): Promise<ApiResponse<{ total: number; rows: BodyData[] }>> => {
     const queryParams = new URLSearchParams()
     const userID = getUserID()
@@ -308,6 +310,8 @@ export const bodyDataApi = {
     if (params?.size) queryParams.append('pageSize', params.size.toString())
     if (params?.startDate) queryParams.append('startDate', params.startDate)
     if (params?.endDate) queryParams.append('endDate', params.endDate)
+    if (params?.sortBy) queryParams.append('sortBy', params.sortBy)
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder)
 
     return api.get(`/bodyMetrics?${queryParams.toString()}`)
   },
