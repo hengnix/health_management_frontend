@@ -355,6 +355,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { userApi, statisticsApi, bodyDataApi, dietApi } from '@/api'
 import MD5 from 'crypto-js/md5'
+import { getLocalToday } from '@/utils/dateUtils'
 
 import {
   User,
@@ -701,7 +702,7 @@ const loadHealthStats = async () => {
 // 获取当前体重、今日卡路里摄入和消耗
 const loadCurrentData = async () => {
   try {
-    const today = new Date().toISOString().split('T')[0]
+    const today = getLocalToday()
 
     const bodyResponse = await bodyDataApi.getList({
       page: 1,

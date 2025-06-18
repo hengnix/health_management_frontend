@@ -334,6 +334,7 @@ import {
   Refresh,
   Check,
 } from '@element-plus/icons-vue'
+import { formatDisplayDate } from '@/utils/dateUtils'
 
 const bodyDataList = ref<BodyData[]>([])
 const latestBodyData = ref<BodyData | null>(null) // 专门存储最新的身体数据
@@ -411,7 +412,7 @@ const loadHealthGoals = () => {
 }
 
 const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('zh-CN')
+  return formatDisplayDate(dateStr)
 }
 
 const calculateBMI = (height: number, weight: number) => {

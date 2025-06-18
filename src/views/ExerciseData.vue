@@ -350,6 +350,7 @@ import {
   Refresh,
   Check,
 } from '@element-plus/icons-vue'
+import { formatDisplayDate } from '@/utils/dateUtils'
 
 const exerciseList = ref<ExerciseRecord[]>([])
 const todayExerciseList = ref<ExerciseRecord[]>([]) // 专门存储今日运动数据
@@ -450,7 +451,7 @@ const getExerciseTypeColor = (exerciseType: string) => {
 }
 
 const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('zh-CN')
+  return formatDisplayDate(dateStr)
 }
 
 // 工具函数：获取本地日期字符串（YYYY-MM-DD 格式）

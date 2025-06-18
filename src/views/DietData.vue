@@ -319,6 +319,7 @@ import {
   Refresh,
   Check,
 } from '@element-plus/icons-vue'
+import { formatDisplayDate } from '@/utils/dateUtils'
 
 const dietList = ref<Diet[]>([])
 const todayDietList = ref<Diet[]>([]) // 专门存储今日数据，不受分页影响
@@ -406,7 +407,7 @@ const loadHealthGoals = () => {
 
 // 辅助函数
 const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('zh-CN')
+  return formatDisplayDate(dateStr)
 }
 
 // 获取用餐类型名称

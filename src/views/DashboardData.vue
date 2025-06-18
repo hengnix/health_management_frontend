@@ -223,6 +223,13 @@ import {
   Plus,
   ArrowDown,
 } from '@element-plus/icons-vue'
+import {
+  getLocalToday,
+  formatLocalDate,
+  isoToLocalDate,
+  formatShortDate,
+  isToday,
+} from '@/utils/dateUtils'
 
 const showBodyDataDialog = ref(false)
 const showDietDialog = ref(false)
@@ -608,8 +615,8 @@ const loadWeightData = async () => {
     startDate.setDate(endDate.getDate() - days + 1)
 
     const response = await bodyDataApi.getList({
-      startDate: startDate.toISOString().split('T')[0],
-      endDate: endDate.toISOString().split('T')[0],
+      startDate: formatLocalDate(startDate),
+      endDate: formatLocalDate(endDate),
     })
 
     if (response.success && response.data) {
@@ -618,7 +625,7 @@ const loadWeightData = async () => {
       const timeMap = new Map<string, string>()
       response.data.rows.forEach(
         (item: { recordDate: string; weightKG: number }) => {
-          const date = new Date(item.recordDate).toISOString().split('T')[0]
+          const date = isoToLocalDate(item.recordDate)
           const existingTime = timeMap.get(date)
           if (!existingTime || item.recordDate > existingTime) {
             dataMap.set(date, item.weightKG)
@@ -632,14 +639,8 @@ const loadWeightData = async () => {
       for (let i = 0; i < days; i++) {
         const currentDate = new Date(startDate)
         currentDate.setDate(startDate.getDate() + i)
-        const dateStr = currentDate.toISOString().split('T')[0]
-        const formattedDate = currentDate
-          .toLocaleDateString('zh-CN', {
-            month: 'numeric',
-            day: 'numeric',
-          })
-          .replace('月', '/')
-          .replace('日', '')
+        const dateStr = formatLocalDate(currentDate)
+        const formattedDate = formatShortDate(currentDate.toISOString())
 
         if (dataMap.has(dateStr)) {
           result.push({
@@ -671,8 +672,8 @@ const loadCaloriesData = async () => {
     startDate.setDate(endDate.getDate() - days + 1)
 
     const dateRange = {
-      startDate: startDate.toISOString().split('T')[0],
-      endDate: endDate.toISOString().split('T')[0],
+      startDate: formatLocalDate(startDate),
+      endDate: formatLocalDate(endDate),
     }
 
     // 分别获取饮食和运动数据，避免并行请求导致服务器压力
@@ -704,7 +705,7 @@ const loadCaloriesData = async () => {
     const dietMap = new Map<string, number>()
     if (dietResponse.success && dietResponse.data && dietResponse.data.rows) {
       dietResponse.data.rows.forEach((item) => {
-        const date = new Date(item.recordDate).toISOString().split('T')[0]
+        const date = isoToLocalDate(item.recordDate)
         const existing = dietMap.get(date) || 0
         dietMap.set(date, existing + (item.estimatedCalories || 0))
       })
@@ -720,13 +721,13 @@ const loadCaloriesData = async () => {
       exerciseResponse.data.rows
         .filter((item) => {
           // 前端筛选日期范围（因为后端不支持日期筛选）
-          const itemDate = new Date(item.recordDate).toISOString().split('T')[0]
+          const itemDate = isoToLocalDate(item.recordDate)
           return (
             itemDate >= dateRange.startDate && itemDate <= dateRange.endDate
           )
         })
         .forEach((item) => {
-          const date = new Date(item.recordDate).toISOString().split('T')[0]
+          const date = isoToLocalDate(item.recordDate)
           const existing = exerciseMap.get(date) || 0
           const calories =
             item.estimatedCaloriesBurned || item.caloriesBurned || 0
@@ -744,14 +745,8 @@ const loadCaloriesData = async () => {
     for (let i = 0; i < days; i++) {
       const currentDate = new Date(startDate)
       currentDate.setDate(startDate.getDate() + i)
-      const dateStr = currentDate.toISOString().split('T')[0]
-      const formattedDate = currentDate
-        .toLocaleDateString('zh-CN', {
-          month: 'numeric',
-          day: 'numeric',
-        })
-        .replace('月', '/')
-        .replace('日', '')
+      const dateStr = formatLocalDate(currentDate)
+      const formattedDate = formatShortDate(currentDate.toISOString())
 
       const intake = dietMap.get(dateStr) || 0
       const burn = exerciseMap.get(dateStr) || 0
@@ -810,8 +805,8 @@ const refreshData = async () => {
     statistics.totalCaloriesBurned = 0
     statistics.averageWeight = 0
 
-    // 获取今日数据
-    const today = new Date().toISOString().split('T')[0]
+    // 获取今日数据 - 使用本地时区
+    const today = getLocalToday()
 
     // 获取最近的身体数据
     const bodyDataResponse = await bodyDataApi.getList({
@@ -854,9 +849,8 @@ const refreshData = async () => {
     ) {
       statistics.totalCaloriesBurned = exerciseResponse.data.rows
         .filter((item) => {
-          // 前端筛选今日数据
-          const itemDate = new Date(item.recordDate).toISOString().split('T')[0]
-          return itemDate === today
+          // 前端筛选今日数据 - 使用本地时区比较
+          return isToday(item.recordDate)
         })
         .reduce((sum: number, item) => {
           const calories =

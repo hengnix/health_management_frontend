@@ -228,6 +228,7 @@ import { exerciseApi } from '@/api'
 import type { ExerciseRequest } from '@/types'
 import { ElMessage, type FormInstance } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
+import { getLocalToday } from '@/utils/dateUtils'
 
 interface Props {
   modelValue: boolean
@@ -250,7 +251,7 @@ const form = ref<ExerciseRequest>({
   exerciseType: '',
   durationMinutes: 0,
   estimatedCaloriesBurned: undefined,
-  recordDate: new Date().toISOString().split('T')[0],
+  recordDate: getLocalToday(),
 })
 
 const rules = {
@@ -479,7 +480,7 @@ const handleClose = () => {
       exerciseType: '',
       durationMinutes: 0,
       estimatedCaloriesBurned: undefined,
-      recordDate: new Date().toISOString().split('T')[0],
+      recordDate: getLocalToday(),
     }
   }
   resetForm()
