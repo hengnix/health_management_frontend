@@ -7,23 +7,33 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base:
-    process.env.NODE_ENV === 'production' && process.env.DEPLOY === 'github'
-      ? '/health_management_frontend/'
-      : '/',
+  base: '/',
   plugins: [vue(), vueDevTools(), tailwindcss()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router'],
+          'element-plus': ['element-plus'],
+          utils: ['axios', 'crypto-js'],
+          icons: ['@element-plus/icons-vue'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500,
+  },
   server: {
-    host: '0.0.0.0',
+    host: true,
     open: true,
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://10.117.34.193:8080',
+        target: 'http://10.161.13.45:8080',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

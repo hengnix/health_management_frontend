@@ -28,7 +28,6 @@
                 style="width: 100%"
                 placeholder="请输入身高"
                 controls-position="right"
-                @change="handleHeightChange"
               />
               <span
                 class="pointer-events-none absolute top-1/2 right-10 z-10 -translate-y-1/2 transform bg-white px-1 text-sm text-gray-400"
@@ -181,10 +180,9 @@ const formRef = ref<FormInstance>()
 const form = reactive({
   heightCM: 170,
   weightKG: 65,
-  recordDate: getLocalDateString(), // 修复时区问题
+  recordDate: getLocalDateString(),
 })
 
-// 日期快捷选项
 const dateShortcuts = [
   {
     text: '今天',
@@ -267,7 +265,6 @@ const getBMIRange = () => {
   return '建议咨询医生'
 }
 
-// 健康提示
 const healthTip = computed(() => {
   const bmi = parseFloat(calculateBMI())
   if (bmi < 18.5) {
@@ -281,22 +278,6 @@ const healthTip = computed(() => {
   }
   return ''
 })
-
-const handleHeightChange = () => {
-  // 身高变化时的处理逻辑
-  if (form.heightCM && form.weightKG) {
-    // 添加一些实时反馈
-    console.log(`当前身高: ${form.heightCM} cm, 体重: ${form.weightKG} kg`)
-    const bmi = calculateBMI()
-    console.log(`当前 BMI: ${bmi}`)
-    if (bmi) {
-      console.log(`当前 BMI 状态: ${getBMIStatus()}`)
-    }
-    if (healthTip.value) {
-      console.log(`健康提示: ${healthTip.value}`)
-    }
-  }
-}
 
 watch(
   () => props.modelValue,
@@ -321,7 +302,6 @@ const loadLatestData = async () => {
       return
     }
 
-    // 获取最近的 1 条记录
     const response = await bodyDataApi.getList({
       page: 1,
       size: 1,
@@ -333,19 +313,17 @@ const loadLatestData = async () => {
       response.data.rows.length > 0
     ) {
       const latestRecord = response.data.rows[0]
-      console.log('加载最新记录:', latestRecord)
 
-      // 使用历史记录的身高和体重作为默认值
       Object.assign(form, {
         heightCM: latestRecord.heightCM || 170,
         weightKG: latestRecord.weightKG || 65,
-        recordDate: getLocalDateString(), // 修复时区问题
+        recordDate: getLocalDateString(),
       })
     } else {
       resetFormWithDefaults()
     }
   } catch (error) {
-    console.error('加载历史数据失败:', error)
+    console.error('Failed to load historical data:', error)
     resetFormWithDefaults()
   }
 
@@ -356,7 +334,7 @@ const resetFormWithDefaults = () => {
   Object.assign(form, {
     heightCM: 170,
     weightKG: 65,
-    recordDate: getLocalDateString(), // 修复时区问题
+    recordDate: getLocalDateString(),
   })
 }
 
@@ -367,24 +345,18 @@ const handleClose = () => {
 const handleSubmit = async () => {
   if (!formRef.value) return
 
-  // 检查用户是否已登录
   const userID = localStorage.getItem('userID')
-  console.log('当前用户 ID:', userID)
 
   if (!userID) {
     ElMessage.error('请先登录')
     return
   }
 
-  console.log('表单数据:', form)
-
-  const valid = await formRef.value.validate().catch((err) => {
-    console.log('表单验证失败:', err)
+  const valid = await formRef.value.validate().catch(() => {
     return false
   })
 
   if (!valid) {
-    console.log('表单验证不通过')
     return
   }
 
@@ -398,9 +370,6 @@ const handleSubmit = async () => {
       recordDate: form.recordDate,
     }
 
-    console.log('发送的数据:', formData)
-
-    // 先查询当日是否已有记录
     const todayRecords = await bodyDataApi.getList({
       startDate: form.recordDate,
       endDate: form.recordDate,
@@ -412,25 +381,18 @@ const handleSubmit = async () => {
       todayRecords.data?.rows &&
       todayRecords.data.rows.length > 0
     ) {
-      // 如果今日已有记录，更新第一条记录
       const existingRecord = todayRecords.data.rows[0]
-      console.log('今日已有记录，更新记录:', existingRecord)
 
-      // 确保 bodyMetricID 存在
       if (existingRecord.bodyMetricID) {
         response = await bodyDataApi.update(
           existingRecord.bodyMetricID,
           formData,
         )
-        console.log('更新 API 响应:', response)
       } else {
         throw new Error('记录 ID 不存在，无法更新')
       }
     } else {
-      // 如果今日没有记录，创建新记录
-      console.log('今日没有记录，创建新记录')
       response = await bodyDataApi.create(formData)
-      console.log('创建 API 响应:', response)
     }
 
     if (response.success) {
@@ -438,11 +400,10 @@ const handleSubmit = async () => {
       emit('success')
       handleClose()
     } else {
-      console.log('API 返回失败:', response.message)
       ElMessage.error(response.message || '记录失败')
     }
   } catch (error: unknown) {
-    console.error('API 调用异常:', error)
+    console.error('API call failed:', error)
     const err = error as {
       response?: { data?: { message?: string } }
       message?: string

@@ -534,7 +534,6 @@ const resetFilter = () => {
 }
 
 const resetForm = () => {
-  // 修复时区问题：使用本地时间而不是 UTC 时间
   const todayLocal = getLocalDateString()
 
   Object.assign(form, {

@@ -105,7 +105,6 @@ const goToDashboard = () => {
 }
 
 const goBack = () => {
-  // 如果有历史记录则返回，否则跳转到首页
   if (window.history.length > 1) {
     router.go(-1)
   } else {

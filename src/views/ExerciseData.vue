@@ -465,7 +465,7 @@ const getLocalDateString = (date = new Date()) => {
 // 专门加载今日运动数据的函数，不受分页影响
 const loadTodayData = async () => {
   try {
-    const today = getLocalDateString() // 修复时区问题
+    const today = getLocalDateString()
     const params = {
       startDate: today,
       endDate: today,
@@ -541,7 +541,7 @@ const resetFilter = () => {
 
 const resetForm = () => {
   Object.assign(form, {
-    recordDate: getLocalDateString(), // 修复时区问题
+    recordDate: getLocalDateString(),
     exerciseType: '',
     durationMinutes: 0,
     estimatedCaloriesBurned: undefined,

@@ -554,7 +554,7 @@ const getLocalDateString = (date = new Date()) => {
 
 const resetForm = () => {
   Object.assign(form, {
-    recordDate: getLocalDateString(), // 修复时区问题
+    recordDate: getLocalDateString(),
     heightCM: 0,
     weightKG: 0,
   })

@@ -204,7 +204,7 @@ const formRef = ref<FormInstance>()
 const form = reactive({
   mealType: '',
   foodName: '',
-  recordDate: getLocalDateString(), // 修复时区问题
+  recordDate: getLocalDateString(),
   estimatedCalories: undefined as number | undefined,
 })
 
@@ -251,7 +251,7 @@ const resetForm = () => {
   Object.assign(form, {
     mealType: defaultMealType,
     foodName: '',
-    recordDate: getLocalDateString(), // 修复时区问题
+    recordDate: getLocalDateString(),
     estimatedCalories: undefined,
   })
   formRef.value?.clearValidate()
@@ -270,7 +270,6 @@ const handleSubmit = async () => {
   submitting.value = true
 
   try {
-    // 根据 API 文档使用正确的字段名
     const formData: DietRequest = {
       userID: '', // 在 API 调用时会自动添加
       recordDate: form.recordDate,
@@ -293,7 +292,6 @@ const handleSubmit = async () => {
   }
 }
 
-// 计算卡路里等级
 const getCalorieLevel = () => {
   if (form.estimatedCalories === undefined) return ''
   if (form.estimatedCalories < 200) {
@@ -305,7 +303,6 @@ const getCalorieLevel = () => {
   }
 }
 
-// 获取卡路里标签类型
 const getCalorieTagType = () => {
   const level = getCalorieLevel()
   if (level === '低热量') return 'success'
@@ -314,7 +311,6 @@ const getCalorieTagType = () => {
   return ''
 }
 
-// 日期快捷选择
 const dateShortcuts = [
   {
     text: '今天',
@@ -344,9 +340,7 @@ const dateShortcuts = [
   },
 ]
 
-// 餐次变化处理
 const handleMealTypeChange = (value: string) => {
-  // 根据选择的餐次调整默认食物
   if (value === '早餐') {
     form.foodName = '燕麦片'
     form.estimatedCalories = 150
@@ -362,7 +356,6 @@ const handleMealTypeChange = (value: string) => {
   }
 }
 
-// 查询食物建议
 const querySearch = async (
   queryString: string,
   cb: (arg0: { value: string; calories: number }[]) => void,
@@ -373,7 +366,6 @@ const querySearch = async (
   }
 
   try {
-    // 模拟 API 请求
     const response = await new Promise<{ value: string; calories: number }[]>(
       (resolve) => {
         setTimeout(() => {
@@ -391,13 +383,11 @@ const querySearch = async (
   }
 }
 
-// 食物选择处理
 const handleFoodSelect = (item: { value: string; calories: number }) => {
   form.foodName = item.value
   form.estimatedCalories = item.calories
 }
 
-// 健康提示
 const healthTip = computed(() => {
   if (form.estimatedCalories === undefined) return ''
 

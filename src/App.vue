@@ -161,9 +161,8 @@ const goToProfile = () => {
 }
 
 const handleAvatarError = (event: Event) => {
-  // 头像加载失败时，清空 avatarUrl 以显示默认头像图标
   const img = event.target as HTMLImageElement
-  console.warn('侧边栏头像加载失败:', img.src)
+  console.warn('Sidebar avatar failed to load:', img.src)
   userStore.avatarUrl = null
 }
 </script>

@@ -13,12 +13,9 @@ const routes = [
   {
     path: '/',
     redirect: () => {
-      // 开发模式下直接跳转到 dashboard，生产模式下检查 token
       if (import.meta.env.DEV) {
         return '/dashboard'
       }
-
-      // 检查是否有 token 来决定重定向目标
       const hasToken = !!localStorage.getItem('token')
       return hasToken ? '/dashboard' : '/login'
     },
@@ -65,7 +62,6 @@ const routes = [
     component: ChatData,
     meta: { requiresAuth: true },
   },
-  // 404 页面路由 - 必须放在最后
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
@@ -79,39 +75,27 @@ const router = createRouter({
   routes,
 })
 
-// 路由守卫
 router.beforeEach((to, _from, next) => {
   const userStore = useUserStore()
 
-  // 开发模式下跳过认证检查
   if (import.meta.env.DEV) {
-    console.log('开发模式：跳过认证检查，直接允许访问', to.path)
+    console.log('Dev mode: Skip auth check, allow access to', to.path)
     next()
     return
   }
 
-  // 检查登录状态，包括 token 和 userID
   const hasToken = !!localStorage.getItem('token')
   const hasUserID = !!localStorage.getItem('userID')
 
-  console.log('路由守卫检查:', {
-    to: to.path,
-    requiresAuth: to.meta.requiresAuth,
-    isLoggedIn: userStore.isLoggedIn,
-    hasToken,
-    hasUserID,
-  })
-
   if (to.meta.requiresAuth) {
     if (!hasToken) {
-      console.log('未找到 token，重定向到登录页')
+      console.log('No token found, redirect to login')
       next('/login')
       return
     }
 
-    // 如果有 token 但没有 userID，尝试恢复
     if (!hasUserID) {
-      console.log('尝试从 token 恢复 userID')
+      console.log('Attempting to recover userID from token')
       const token = localStorage.getItem('token')
       if (token && token.includes('.')) {
         try {
@@ -135,29 +119,30 @@ router.beforeEach((to, _from, next) => {
               payload.user_id
             if (userIDFromToken) {
               localStorage.setItem('userID', userIDFromToken)
-              console.log('路由守卫中恢复 userID 成功:', userIDFromToken)
+              console.log('UserID recovered successfully:', userIDFromToken)
             } else {
-              console.warn('无法从 token 中解析 userID，重定向到登录页')
+              console.warn(
+                'Unable to parse userID from token, redirect to login',
+              )
               next('/login')
               return
             }
           }
         } catch (e) {
-          console.error('路由守卫中 JWT 解析失败:', e)
+          console.error('JWT parsing failed in route guard:', e)
           next('/login')
           return
         }
       } else {
-        console.log('无效 token，重定向到登录页')
+        console.log('Invalid token, redirect to login')
         next('/login')
         return
       }
     }
 
-    console.log('认证检查通过，允许访问')
     next()
   } else if (to.path === '/login' && userStore.isLoggedIn) {
-    console.log('已登录用户访问登录页，重定向到 dashboard')
+    console.log('Logged in user accessing login page, redirect to dashboard')
     next('/dashboard')
   } else {
     next()

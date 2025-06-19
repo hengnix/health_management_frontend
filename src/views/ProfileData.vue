@@ -353,7 +353,13 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { userApi, statisticsApi, bodyDataApi, dietApi } from '@/api'
+import {
+  userApi,
+  statisticsApi,
+  bodyDataApi,
+  dietApi,
+  exerciseApi,
+} from '@/api'
 import MD5 from 'crypto-js/md5'
 import { getLocalToday } from '@/utils/dateUtils'
 
@@ -379,7 +385,6 @@ import {
 const router = useRouter()
 const userStore = useUserStore()
 
-// 用户基本信息
 const userInfo = reactive({
   userID: '',
   email: '',
@@ -389,7 +394,6 @@ const userInfo = reactive({
   avatarUrl: '',
 })
 
-// 健康统计数据
 const healthStats = reactive({
   totalRecords: {
     diet: 0,
@@ -399,18 +403,15 @@ const healthStats = reactive({
   activeDays: 0,
 })
 
-// 健康目标 (从 localStorage 获取)
 const goals = reactive({
   targetWeight: null as number | null,
   dailyCaloriesIntake: null as number | null,
   dailyCaloriesBurn: null as number | null,
 })
 
-// 对话框控制
 const showEditDialog = ref(false)
 const showGoalsDialog = ref(false)
 
-// 加载状态
 const loading = ref(false)
 const statsLoading = ref(false)
 const avatarLoading = ref(false)
@@ -420,18 +421,15 @@ const avatarInput = ref<HTMLInputElement>()
 
 // 头像加载错误处理
 const handleProfileAvatarError = (event: Event) => {
-  // 头像加载失败时，清空 avatarUrl 以显示默认头像图标
   const img = event.target as HTMLImageElement
-  console.warn('个人资料页头像加载失败:', img.src)
+  console.warn('Profile page avatar failed to load:', img.src)
   userInfo.avatarUrl = ''
 }
 
-// 当前体重、今日卡路里摄入和今日卡路里消耗（用于计算进度）
 const currentWeight = ref<number | null>(null)
 const todayCalories = ref<number>(0)
 const todayCaloriesBurned = ref<number>(0)
 
-// 编辑表单
 const editForm = reactive({
   nickname: '',
   gender: '',
@@ -446,29 +444,24 @@ const goalsForm = reactive({
   dailyCaloriesBurn: null as number | null,
 })
 
-// 格式化日期
 const formatDate = (dateStr: string) => {
   if (!dateStr) return ''
   return new Date(dateStr).toLocaleDateString('zh-CN')
 }
 
-// 触发头像上传
 const triggerAvatarUpload = () => {
   avatarInput.value?.click()
 }
 
-// 处理头像文件选择
 const handleAvatarChange = async (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
 
   if (!file) return
 
-  // 验证文件类型
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
   const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif']
 
-  // 获取文件扩展名
   const fileName = file.name.toLowerCase()
   const fileExtension = fileName.substring(fileName.lastIndexOf('.'))
 
@@ -486,14 +479,12 @@ const handleAvatarChange = async (event: Event) => {
         `不支持的图片格式！当前格式为 ${file.type}，请选择 ${allowedExtensions.join('、')} 格式的图片文件`,
       )
     }
-    // 清空文件输入框
     if (target) {
       target.value = ''
     }
     return
   }
 
-  // 验证文件大小（限制为 5MB）
   const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2)
@@ -501,22 +492,18 @@ const handleAvatarChange = async (event: Event) => {
     ElMessage.error(
       `图片文件过大！当前大小为 ${fileSizeMB}MB，请选择小于 ${maxSizeMB}MB 的图片`,
     )
-    // 清空文件输入框
     if (target) {
       target.value = ''
     }
     return
   }
 
-  // 检查图片尺寸
   const img = new Image()
   img.onload = async () => {
     const { width, height } = img
 
-    // 设置最大允许尺寸
     const maxDimension = 2000
 
-    // 如果图片尺寸过大，阻止上传
     if (width > maxDimension || height > maxDimension) {
       ElMessage.error(
         `图片尺寸过大！当前尺寸为 ${width}×${height}，请选择 ${maxDimension}×${maxDimension} 以下的图片`,
@@ -576,7 +563,7 @@ const performUpload = async (file: File, target: HTMLInputElement) => {
       ElMessage.error(errorMessage)
     }
   } catch (error: unknown) {
-    console.error('头像上传失败:', error)
+    console.error('Avatar upload failed:', error)
 
     // 根据不同的错误类型显示不同的错误信息
     let errorMessage = '头像上传失败，请稍后重试'
@@ -639,35 +626,27 @@ const performUpload = async (file: File, target: HTMLInputElement) => {
   }
 }
 
-// 加载头像
 const loadAvatar = async () => {
   try {
     const response = await userApi.getAvatar()
-    console.log('获取头像响应:', response)
     if (response && response.avatarUrl) {
       userInfo.avatarUrl = response.avatarUrl
-      console.log('头像 URL 设置为:', userInfo.avatarUrl)
     } else {
-      console.log('获取头像响应无数据，使用默认头像')
       userInfo.avatarUrl = ''
     }
   } catch (error: unknown) {
-    console.error('加载头像失败:', error)
-    // 如果是 404 错误，说明用户没有头像，这是正常情况
+    console.error('Failed to load avatar:', error)
     if (error && typeof error === 'object' && 'response' in error) {
       const apiError = error as { response?: { status?: number } }
       if (apiError.response?.status === 404) {
-        console.log('用户未设置头像 (404)，使用默认头像')
         userInfo.avatarUrl = ''
         return
       }
     }
-    // 其他错误也使用默认头像
     userInfo.avatarUrl = ''
   }
 }
 
-// 加载用户基本信息
 const loadUserInfo = async () => {
   try {
     loading.value = true
@@ -676,14 +655,13 @@ const loadUserInfo = async () => {
       Object.assign(userInfo, response.data)
     }
   } catch (error) {
-    console.error('加载用户信息失败:', error)
+    console.error('Failed to load user info:', error)
     ElMessage.error('加载用户信息失败')
   } finally {
     loading.value = false
   }
 }
 
-// 加载健康统计数据
 const loadHealthStats = async () => {
   try {
     statsLoading.value = true
@@ -731,7 +709,6 @@ const loadCurrentData = async () => {
 
     // 获取今日卡路里消耗
     try {
-      const { exerciseApi } = await import('@/api')
       const exerciseResponse = await exerciseApi.getList({
         startDate: today,
         endDate: today,

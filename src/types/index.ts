@@ -2,11 +2,11 @@
 export interface User {
   userID: string // 对应 API 的 36 位 UUID
   email: string
-  nickname?: string // 添加 nickname 字段
-  gender?: string // 改为 string 类型，支持中文（"男"、"女"）
-  dateOfBirth?: string // 添加出生日期字段，格式 YYYY-MM-DD
-  avatarUrl?: string // 头像 URL
-  // 保留原有字段作为兼容
+  nickname?: string
+  gender?: string // 支持中文（"男"、"女"）
+  dateOfBirth?: string // 格式 YYYY-MM-DD
+  avatarUrl?: string
+  // 兼容字段
   id?: number
   username?: string
   age?: number
@@ -28,7 +28,7 @@ export interface RegisterRequest {
   nickname?: string
   gender?: string
   dateOfBirth?: string // 格式 YYYY-MM-DD
-  // 保留原有字段作为兼容
+  // 兼容字段
   username?: string
   password?: string
   age?: number
@@ -37,17 +37,17 @@ export interface RegisterRequest {
   activityLevel?: 'LOW' | 'MODERATE' | 'HIGH'
 }
 
-// 身体数据相关类型 - 根据 API文档修正
+// 身体数据相关类型
 export interface BodyData {
   bodyMetricID?: number // API 返回的 ID 字段
-  userID: string // 用户 ID 为 string 类型
-  heightCM: number // 身高（厘米），精确到 2 位小数
-  weightKG: number // 体重（千克），精确到 2 位小数
-  bmi?: number // BMI 值
+  userID: string
+  heightCM: number // 身高（cm），精确到 2 位小数
+  weightKG: number // 体重（kg），精确到 2 位小数
+  bmi?: number
   recordDate: string // 记录日期 YYYY-MM-DD
   createdAt?: string
   updatedAt?: string
-  // 保留原有字段作为兼容
+  // 兼容字段
   id?: number
   userId?: number
   weight?: number
@@ -55,33 +55,33 @@ export interface BodyData {
   muscleMass?: number
 }
 
-// 为了兼容性添加别名
+// 兼容性别名
 export type BodyDataRecord = BodyData
 export type Diet = DietRecord
 export type Exercise = ExerciseRecord
 
 export interface BodyDataRequest {
-  userID: string // 用户 ID
-  heightCM: number // 身高（厘米）
-  weightKG: number // 体重（千克）
+  userID: string
+  heightCM: number // 身高（cm）
+  weightKG: number // 体重（kg）
   recordDate?: string // 记录日期，可选（默认今日）
-  // 保留原有字段作为兼容
+  // 兼容字段
   weight?: number
   bodyFat?: number
   muscleMass?: number
 }
 
-// 饮食相关类型 - 根据 API 文档修正
+// 饮食相关类型
 export interface DietRecord {
   dietItemID?: number // API 返回的 ID 字段
-  userID: string // 用户 ID
+  userID: string
   recordDate: string // 记录日期 YYYY-MM-DD
   foodName: string
   mealType: string // 餐型（早餐/午餐/晚餐/加餐）
-  estimatedCalories?: number // 估计热量（大卡）- 可选
+  estimatedCalories?: number // 估计热量（kcal）
   createdAt?: string
   updatedAt?: string
-  // 保留原有字段作为兼容
+  // 兼容字段
   id?: number
   userId?: number
   calories?: number
@@ -96,12 +96,12 @@ export interface DietRecord {
 }
 
 export interface DietRequest {
-  userID: string // 用户 ID
-  recordDate: string // 记录日期 YYYY-MM-DD - 必须字段
+  userID: string
+  recordDate: string // 记录日期 YYYY-MM-DD
   foodName: string
   mealType: string // 餐型（早餐/午餐/晚餐/加餐）
-  estimatedCalories?: number // 估计热量（大卡）- 可选
-  // 保留原有字段作为兼容
+  estimatedCalories?: number // 估计热量（kcal）
+  // 兼容字段
   calories?: number
   protein?: number
   carbohydrates?: number
@@ -116,14 +116,14 @@ export interface DietRequest {
 // 运动相关类型
 export interface ExerciseRecord {
   exerciseItemID?: number // API 返回的 ID 字段
-  userID: string // 用户 ID
+  userID: string
   exerciseType: string // 运动类型（如跑步/游泳）
   durationMinutes: number // 持续时间（分钟）
-  estimatedCaloriesBurned?: number // 消耗热量（大卡）- 可选
+  estimatedCaloriesBurned?: number // 消耗热量（kcal）
   recordDate: string // 记录日期 YYYY-MM-DD
   createdAt?: string
   updatedAt?: string
-  // 保留原有字段作为兼容
+  // 兼容字段
   id?: number
   userId?: number
   exerciseName?: string
@@ -133,12 +133,12 @@ export interface ExerciseRecord {
 }
 
 export interface ExerciseRequest {
-  userID: string // 用户 ID
+  userID: string
   exerciseType: string // 运动类型
   durationMinutes: number // 持续时间（分钟）
-  estimatedCaloriesBurned?: number // 消耗热量（大卡）- 可选
+  estimatedCaloriesBurned?: number // 消耗热量（kcal）
   recordDate?: string // 记录日期，可选（默认今日）
-  // 保留原有字段作为兼容
+  // 兼容字段
   exerciseName?: string
   duration?: number
   caloriesBurned?: number
@@ -153,7 +153,7 @@ export interface ApiResponse<T> {
   error?: string
 }
 
-// API 原始响应数据类型（处理字段名大小写不一致的问题）
+// API 原始响应数据类型（处理字段名大小写不一致）
 export interface ApiBodyDataRow {
   BodyMetricID?: number
   bodyMetricID?: number
@@ -169,7 +169,7 @@ export interface ApiBodyDataRow {
   updatedAt?: string
 }
 
-// API 错误类型定义
+// API 错误类型
 export interface ApiError {
   response?: {
     status?: number
