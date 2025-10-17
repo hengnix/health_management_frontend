@@ -10,12 +10,7 @@
           </h1>
           <p class="subtitle">记录并追踪您的身体健康指标</p>
         </div>
-        <el-button
-          type="primary"
-          size="large"
-          @click="openAddDialog"
-          class="add-btn"
-        >
+        <el-button type="primary" size="large" @click="openAddDialog" class="add-btn">
           <el-icon><Plus /></el-icon>
           <span> 添加身体数据 </span>
         </el-button>
@@ -139,41 +134,19 @@
         stripe
         :default-sort="{ prop: 'recordDate', order: 'descending' }"
       >
-        <el-table-column
-          prop="recordDate"
-          label="记录日期"
-          min-width="120"
-          sortable
-        >
+        <el-table-column prop="recordDate" label="记录日期" min-width="120" sortable>
           <template #default="{ row }">
             <el-tag type="info" effect="plain">
               {{ formatDate(row.recordDate) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="heightCM"
-          label="身高（cm）"
-          min-width="100"
-          sortable
-        />
-        <el-table-column
-          prop="weightKG"
-          label="体重（kg）"
-          min-width="100"
-          sortable
-        />
+        <el-table-column prop="heightCM" label="身高（cm）" min-width="100" sortable />
+        <el-table-column prop="weightKG" label="体重（kg）" min-width="100" sortable />
         <el-table-column prop="bmi" label="BMI 指数" min-width="120" sortable>
           <template #default="{ row }">
-            <el-tag
-              :type="getBMITagType(row.heightCM, row.weightKG)"
-              effect="light"
-            >
-              {{
-                row.bmi
-                  ? row.bmi.toFixed(2)
-                  : calculateBMI(row.heightCM, row.weightKG)
-              }}
+            <el-tag :type="getBMITagType(row.heightCM, row.weightKG)" effect="light">
+              {{ row.bmi ? row.bmi.toFixed(2) : calculateBMI(row.heightCM, row.weightKG) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -227,13 +200,7 @@
       width="500px"
       class="form-dialog"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-        class="dialog-form"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="dialog-form">
         <el-form-item label="记录日期" prop="recordDate">
           <el-date-picker
             v-model="form.recordDate"
@@ -251,9 +218,7 @@
               :min="100"
               :max="250"
               :precision="1"
-              :placeholder="
-                latestHeight ? `当前: ${latestHeight}cm` : '请输入身高'
-              "
+              :placeholder="latestHeight ? `当前: ${latestHeight}cm` : '请输入身高'"
               style="width: 100%"
               controls-position="right"
             />
@@ -267,9 +232,7 @@
               :min="30"
               :max="300"
               :precision="1"
-              :placeholder="
-                latestWeight ? `当前: ${latestWeight}kg` : '请输入体重'
-              "
+              :placeholder="latestWeight ? `当前: ${latestWeight}kg` : '请输入体重'"
               style="width: 100%"
               controls-position="right"
             />
@@ -280,10 +243,7 @@
           <el-card class="bmi-card-preview">
             <div class="bmi-preview-content">
               <span class="bmi-label">预览 BMI:</span>
-              <el-tag
-                :type="getBMITagType(form.heightCM, form.weightKG)"
-                size="large"
-              >
+              <el-tag :type="getBMITagType(form.heightCM, form.weightKG)" size="large">
                 {{ calculateBMI(form.heightCM, form.weightKG) }}
               </el-tag>
               <span class="bmi-status-preview">{{
@@ -296,12 +256,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showDialog = false" size="large">取消</el-button>
-          <el-button
-            type="primary"
-            @click="submitForm"
-            :loading="submitting"
-            size="large"
-          >
+          <el-button type="primary" @click="submitForm" :loading="submitting" size="large">
             <el-icon><Check /></el-icon>
             <span> 确认 </span>
           </el-button>
@@ -314,12 +269,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { bodyDataApi } from '@/api'
-import type {
-  BodyData,
-  BodyDataRequest,
-  ApiBodyDataRow,
-  ApiError,
-} from '@/types'
+import type { BodyData, BodyDataRequest, ApiBodyDataRow, ApiError } from '@/types'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
 import {
   Plus,
@@ -434,10 +384,7 @@ const updateLatestDataFromList = () => {
   if (bodyDataList.value.length > 0 && pagination.currentPage === 1) {
     // 第一页的第一条数据就是最新的（后端已排序）
     latestBodyData.value = bodyDataList.value[0]
-    console.log(
-      'Latest body data updated from list (第一页第一条):',
-      latestBodyData.value,
-    )
+    console.log('Latest body data updated from list (第一页第一条):', latestBodyData.value)
   }
 }
 
@@ -471,8 +418,7 @@ const loadLatestData = async () => {
       if (allData.length > 0) {
         // 按日期排序找到最新的
         const sortedData = allData.sort(
-          (a, b) =>
-            new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
+          (a, b) => new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
         )
         latestBodyData.value = sortedData[0]
         console.log('Latest body data loaded (全局最新):', latestBodyData.value)
@@ -689,9 +635,7 @@ const handleFilterChange = () => {
 }
 
 const rules = {
-  recordDate: [
-    { required: true, message: '请选择记录日期', trigger: 'change' },
-  ],
+  recordDate: [{ required: true, message: '请选择记录日期', trigger: 'change' }],
   heightCM: [
     { required: true, message: '请输入身高', trigger: 'blur' },
     {
@@ -890,12 +834,7 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   border-radius: 20px;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1154,12 +1093,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1178,11 +1112,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--primary.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.1) 0%,
-    rgba(118, 75, 162, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-color: rgba(102, 126, 234, 0.4);
   color: #667eea;
 }
@@ -1195,11 +1125,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--danger.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(245, 101, 101, 0.1) 0%,
-    rgba(229, 62, 62, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(229, 62, 62, 0.1) 100%);
   border-color: rgba(245, 101, 101, 0.4);
   color: #f56565;
 }
@@ -1244,11 +1170,7 @@ onUnmounted(() => {
 .bmi-card-preview {
   border: none;
   border-radius: 15px;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
   overflow: hidden;
   position: relative;
@@ -1366,11 +1288,7 @@ onUnmounted(() => {
 
 :deep(.form-dialog .el-dialog__body) {
   padding: 30px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.95) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
   backdrop-filter: blur(20px);
 }
 
@@ -1538,11 +1456,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   padding: 30px 0;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.03) 0%,
-    rgba(118, 75, 162, 0.03) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
   border-radius: 0 0 20px 20px;
 }
 
@@ -1634,11 +1548,7 @@ onUnmounted(() => {
 /* 对话框底部按钮美化 */
 :deep(.form-dialog .el-dialog__footer) {
   padding: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   border-top: 1px solid rgba(102, 126, 234, 0.1);
 }
 
@@ -1669,12 +1579,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1713,11 +1618,7 @@ onUnmounted(() => {
 }
 
 .dialog-footer .el-button--primary.is-loading {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.7) 0%,
-    rgba(118, 75, 162, 0.7) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
 }
 
 /* 操作按钮美化样式 */
@@ -1755,12 +1656,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1779,11 +1675,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--primary.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.1) 0%,
-    rgba(118, 75, 162, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-color: rgba(102, 126, 234, 0.4);
   color: #667eea;
 }
@@ -1796,11 +1688,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--danger.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(245, 101, 101, 0.1) 0%,
-    rgba(229, 62, 62, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(229, 62, 62, 0.1) 100%);
   border-color: rgba(245, 101, 101, 0.4);
   color: #f56565;
 }

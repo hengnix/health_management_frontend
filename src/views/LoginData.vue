@@ -1,9 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h2 class="login-title">
-        {{ isRegister ? '注册' : '登录' }}健康生活管理系统
-      </h2>
+      <h2 class="login-title">{{ isRegister ? '注册' : '登录' }}健康生活管理系统</h2>
 
       <el-form
         ref="formRef"
@@ -65,11 +63,7 @@
           </el-form-item>
 
           <el-form-item prop="gender" class="form-item radio-group-item">
-            <el-radio-group
-              v-model="form.gender"
-              size="large"
-              class="form-radio-group"
-            >
+            <el-radio-group v-model="form.gender" size="large" class="form-radio-group">
               <el-radio label="男" size="large">男</el-radio>
               <el-radio label="女" size="large">女</el-radio>
             </el-radio-group>
@@ -103,12 +97,7 @@
         </el-form-item>
 
         <el-form-item class="form-item toggle-item">
-          <el-button
-            type="text"
-            @click="toggleMode"
-            class="toggle-btn"
-            size="large"
-          >
+          <el-button type="text" @click="toggleMode" class="toggle-btn" size="large">
             {{ isRegister ? '已有账户？点击登录' : '没有账户？点击注册' }}
           </el-button>
         </el-form-item>
@@ -153,11 +142,7 @@ const rules = {
   confirmPassword: [
     { required: true, message: '请确认密码', trigger: 'blur' },
     {
-      validator: (
-        _: unknown,
-        value: string,
-        callback: (error?: Error) => void,
-      ) => {
+      validator: (_: unknown, value: string, callback: (error?: Error) => void) => {
         if (value !== form.password) {
           callback(new Error('两次输入的密码不一致'))
         } else {
@@ -172,9 +157,7 @@ const rules = {
     { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
   ],
   gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
-  dateOfBirth: [
-    { required: true, message: '请选择出生日期', trigger: 'change' },
-  ],
+  dateOfBirth: [{ required: true, message: '请选择出生日期', trigger: 'change' }],
 }
 
 const toggleMode = () => {
@@ -333,12 +316,7 @@ const handleSubmit = async () => {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   border-radius: 1.5rem 1.5rem 0 0;
 }
 

@@ -25,12 +25,7 @@
             </el-icon>
             <span> 清除记忆 </span>
           </el-button>
-          <el-button
-            type="warning"
-            size="default"
-            @click="clearChatHistory"
-            class="clear-btn"
-          >
+          <el-button type="warning" size="default" @click="clearChatHistory" class="clear-btn">
             <el-icon>
               <Delete />
             </el-icon>
@@ -58,11 +53,7 @@
           <div
             v-for="(message, index) in messages"
             :key="index"
-            :class="[
-              'message-item',
-              message.type,
-              { streaming: message.isStreaming },
-            ]"
+            :class="['message-item', message.type, { streaming: message.isStreaming }]"
           >
             <div class="message-avatar">
               <el-icon v-if="message.type === 'user'">
@@ -73,16 +64,10 @@
               </el-icon>
             </div>
             <div class="message-content">
-              <div
-                class="message-bubble"
-                :class="{ streaming: message.isStreaming }"
-              >
+              <div class="message-bubble" :class="{ streaming: message.isStreaming }">
                 <!-- 如果是流式传输且内容为空，显示思考动画 -->
                 <div
-                  v-if="
-                    message.isStreaming &&
-                    (!message.content || message.content.trim() === '')
-                  "
+                  v-if="message.isStreaming && (!message.content || message.content.trim() === '')"
                   class="typing-indicator"
                 >
                   <span></span>
@@ -90,18 +75,13 @@
                   <span></span>
                 </div>
                 <!-- 否则显示内容 -->
-                <div
-                  v-else-if="message.content"
-                  v-html="sanitizeHtml(message.content)"
-                ></div>
+                <div v-else-if="message.content" v-html="sanitizeHtml(message.content)"></div>
                 <!-- 空内容占位 -->
                 <div v-else>&nbsp;</div>
               </div>
               <div class="message-time">
                 {{ formatTime(message.timestamp) }}
-                <span v-if="message.isStreaming" class="streaming-indicator">
-                  正在输入...
-                </span>
+                <span v-if="message.isStreaming" class="streaming-indicator"> 正在输入... </span>
               </div>
             </div>
           </div>
@@ -487,10 +467,7 @@ const sendMessage = async () => {
     // 流式传输完成，更新状态
     if (messages[aiMessageIndex]) {
       messages[aiMessageIndex].isStreaming = false
-      console.log(
-        '流式传输完成，最终内容长度:',
-        messages[aiMessageIndex].content.length,
-      )
+      console.log('流式传输完成，最终内容长度:', messages[aiMessageIndex].content.length)
       // 手动触发保存，确保完整的 AI 回答被保存
       saveChatHistory()
     }

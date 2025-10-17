@@ -8,13 +8,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      class="bg-white/98 p-8"
-    >
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="bg-white/98 p-8">
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item label="身高" prop="heightCM">
@@ -70,18 +64,13 @@
       </el-form-item>
 
       <!-- BMI 预览 -->
-      <div
-        v-if="form.heightCM && form.weightKG"
-        class="animate-fade-in-up mt-6"
-      >
+      <div v-if="form.heightCM && form.weightKG" class="animate-fade-in-up mt-6">
         <el-card
           class="w-full rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
         >
           <div class="flex flex-col gap-4">
             <div class="flex items-center justify-between">
-              <span
-                class="flex items-center gap-2 text-base font-bold text-gray-700"
-              >
+              <span class="flex items-center gap-2 text-base font-bold text-gray-700">
                 📊 BMI 指数
               </span>
               <el-tag
@@ -227,9 +216,7 @@ const rules = {
       trigger: 'blur',
     },
   ],
-  recordDate: [
-    { required: true, message: '请选择记录日期', trigger: 'change' },
-  ],
+  recordDate: [{ required: true, message: '请选择记录日期', trigger: 'change' }],
 }
 
 const calculateBMI = () => {
@@ -307,11 +294,7 @@ const loadLatestData = async () => {
       size: 1,
     })
 
-    if (
-      response.success &&
-      response.data?.rows &&
-      response.data.rows.length > 0
-    ) {
+    if (response.success && response.data?.rows && response.data.rows.length > 0) {
       const latestRecord = response.data.rows[0]
 
       Object.assign(form, {
@@ -376,18 +359,11 @@ const handleSubmit = async () => {
     })
 
     let response
-    if (
-      todayRecords.success &&
-      todayRecords.data?.rows &&
-      todayRecords.data.rows.length > 0
-    ) {
+    if (todayRecords.success && todayRecords.data?.rows && todayRecords.data.rows.length > 0) {
       const existingRecord = todayRecords.data.rows[0]
 
       if (existingRecord.bodyMetricID) {
-        response = await bodyDataApi.update(
-          existingRecord.bodyMetricID,
-          formData,
-        )
+        response = await bodyDataApi.update(existingRecord.bodyMetricID, formData)
       } else {
         throw new Error('记录 ID 不存在，无法更新')
       }

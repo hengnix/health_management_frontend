@@ -18,20 +18,12 @@
     <!-- 个人信息卡片 -->
     <div class="profile-grid">
       <!-- 基本信息卡片 -->
-      <el-card
-        class="info-card basic-info-card"
-        v-loading="loading || avatarLoading"
-      >
+      <el-card class="info-card basic-info-card" v-loading="loading || avatarLoading">
         <div class="card-header">
           <h3>
             <el-icon><UserFilled /></el-icon> 基本信息
           </h3>
-          <el-button
-            type="primary"
-            size="small"
-            @click="editBasicInfo"
-            class="edit-btn"
-          >
+          <el-button type="primary" size="small" @click="editBasicInfo" class="edit-btn">
             <el-icon><Edit /></el-icon> <span>编辑</span>
           </el-button>
         </div>
@@ -39,11 +31,7 @@
           <!-- 头像和基本信息部分 -->
           <div class="avatar-info-section">
             <!-- 头像部分 -->
-            <el-tooltip
-              content="点击更换头像"
-              placement="top"
-              :disabled="avatarLoading"
-            >
+            <el-tooltip content="点击更换头像" placement="top" :disabled="avatarLoading">
               <div class="avatar-container" @click="triggerAvatarUpload">
                 <div class="avatar-display" :class="{ loading: avatarLoading }">
                   <img
@@ -170,12 +158,7 @@
           <h3>
             <el-icon><Flag /></el-icon> 健康目标
           </h3>
-          <el-button
-            type="success"
-            size="small"
-            @click="editGoals"
-            class="edit-btn"
-          >
+          <el-button type="success" size="small" @click="editGoals" class="edit-btn">
             <el-icon><Setting /></el-icon> <span>设置目标</span>
           </el-button>
         </div>
@@ -186,9 +169,7 @@
             </div>
             <div class="goal-info">
               <div class="goal-title">每日卡路里摄入目标</div>
-              <div class="goal-value">
-                {{ goals.dailyCaloriesIntake || '未设置' }} kcal
-              </div>
+              <div class="goal-value">{{ goals.dailyCaloriesIntake || '未设置' }} kcal</div>
             </div>
             <div class="goal-progress">
               <el-progress
@@ -204,9 +185,7 @@
             </div>
             <div class="goal-info">
               <div class="goal-title">每日卡路里消耗目标</div>
-              <div class="goal-value">
-                {{ goals.dailyCaloriesBurn || '未设置' }} kcal
-              </div>
+              <div class="goal-value">{{ goals.dailyCaloriesBurn || '未设置' }} kcal</div>
             </div>
             <div class="goal-progress">
               <el-progress
@@ -223,10 +202,7 @@
             <div class="goal-info">
               <div class="goal-title">目标体重</div>
               <div class="goal-value weight-ratio">
-                <span
-                  class="current-weight"
-                  :style="{ color: getWeightColor() }"
-                >
+                <span class="current-weight" :style="{ color: getWeightColor() }">
                   {{ currentWeight?.toFixed(1) || '未知' }}
                 </span>
                 <span class="separator">/</span>
@@ -240,26 +216,13 @@
       </el-card>
     </div>
     <!-- 编辑基本信息对话框 -->
-    <el-dialog
-      v-model="showEditDialog"
-      title="编辑基本信息"
-      width="600px"
-      class="edit-dialog"
-    >
+    <el-dialog v-model="showEditDialog" title="编辑基本信息" width="600px" class="edit-dialog">
       <el-form :model="editForm" label-width="100px" class="edit-form">
         <el-form-item label="昵称">
-          <el-input
-            v-model="editForm.nickname"
-            placeholder="请输入昵称"
-            clearable
-          />
+          <el-input v-model="editForm.nickname" placeholder="请输入昵称" clearable />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select
-            v-model="editForm.gender"
-            placeholder="请选择性别"
-            style="width: 100%"
-          >
+          <el-select v-model="editForm.gender" placeholder="请选择性别" style="width: 100%">
             <el-option label="男" value="男" />
             <el-option label="女" value="女" />
           </el-select>
@@ -296,18 +259,11 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showEditDialog = false">取消</el-button>
-          <el-button type="primary" @click="saveBasicInfo" :loading="loading">
-            保存
-          </el-button>
+          <el-button type="primary" @click="saveBasicInfo" :loading="loading"> 保存 </el-button>
         </div>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="showGoalsDialog"
-      title="设置健康目标"
-      width="600px"
-      class="edit-dialog"
-    >
+    <el-dialog v-model="showGoalsDialog" title="设置健康目标" width="600px" class="edit-dialog">
       <el-form :model="goalsForm" label-width="140px" class="edit-form">
         <el-form-item label="每日卡路里摄入目标">
           <el-input-number
@@ -353,13 +309,7 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import {
-  userApi,
-  statisticsApi,
-  bodyDataApi,
-  dietApi,
-  exerciseApi,
-} from '@/api'
+import { userApi, statisticsApi, bodyDataApi, dietApi, exerciseApi } from '@/api'
 import MD5 from 'crypto-js/md5'
 import { getLocalToday } from '@/utils/dateUtils'
 
@@ -471,9 +421,7 @@ const handleAvatarChange = async (event: Event) => {
 
   if (!isValidMimeType || !isValidExtension) {
     if (!isValidExtension) {
-      ElMessage.error(
-        `不支持的文件扩展名！请选择 ${allowedExtensions.join('、')} 格式的图片文件`,
-      )
+      ElMessage.error(`不支持的文件扩展名！请选择 ${allowedExtensions.join('、')} 格式的图片文件`)
     } else {
       ElMessage.error(
         `不支持的图片格式！当前格式为 ${file.type}，请选择 ${allowedExtensions.join('、')} 格式的图片文件`,
@@ -489,9 +437,7 @@ const handleAvatarChange = async (event: Event) => {
   if (file.size > maxSize) {
     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2)
     const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(0)
-    ElMessage.error(
-      `图片文件过大！当前大小为 ${fileSizeMB}MB，请选择小于 ${maxSizeMB}MB 的图片`,
-    )
+    ElMessage.error(`图片文件过大！当前大小为 ${fileSizeMB}MB，请选择小于 ${maxSizeMB}MB 的图片`)
     if (target) {
       target.value = ''
     }
@@ -687,11 +633,7 @@ const loadCurrentData = async () => {
       size: 1,
       endDate: today,
     })
-    if (
-      bodyResponse.success &&
-      bodyResponse.data?.rows &&
-      bodyResponse.data.rows.length > 0
-    ) {
+    if (bodyResponse.success && bodyResponse.data?.rows && bodyResponse.data.rows.length > 0) {
       currentWeight.value = bodyResponse.data.rows[0].weightKG
     }
 
@@ -735,11 +677,7 @@ const loadGoals = () => {
     const parsed = JSON.parse(savedGoals)
     goals.targetWeight = parsed.targetWeight
     // 向后兼容：如果有旧的 dailyCalories，拆分为摄入和消耗
-    if (
-      parsed.dailyCalories &&
-      !parsed.dailyCaloriesIntake &&
-      !parsed.dailyCaloriesBurn
-    ) {
+    if (parsed.dailyCalories && !parsed.dailyCaloriesIntake && !parsed.dailyCaloriesBurn) {
       goals.dailyCaloriesIntake = parsed.dailyCalories
       goals.dailyCaloriesBurn = Math.round(parsed.dailyCalories * 0.3) // 默认消耗为摄入的 30%
     } else {
@@ -911,12 +849,7 @@ const handleLogout = () => {
 // 初始化数据
 const initData = async () => {
   loadGoals()
-  await Promise.all([
-    loadUserInfo(),
-    loadHealthStats(),
-    loadCurrentData(),
-    loadAvatar(),
-  ])
+  await Promise.all([loadUserInfo(), loadHealthStats(), loadCurrentData(), loadAvatar()])
 }
 
 onMounted(() => {

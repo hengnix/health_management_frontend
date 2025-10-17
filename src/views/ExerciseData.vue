@@ -10,12 +10,7 @@
           </h1>
           <p class="subtitle">记录您的运动数据，保持健康活力</p>
         </div>
-        <el-button
-          type="primary"
-          size="large"
-          @click="openAddDialog"
-          class="add-btn"
-        >
+        <el-button type="primary" size="large" @click="openAddDialog" class="add-btn">
           <el-icon><Plus /></el-icon>
           <span> 添加运动记录 </span>
         </el-button>
@@ -144,12 +139,7 @@
         :header-cell-style="{ background: '#f8f9fa', color: '#495057' }"
         stripe
       >
-        <el-table-column
-          prop="recordDate"
-          label="记录日期"
-          min-width="120"
-          sortable
-        >
+        <el-table-column prop="recordDate" label="记录日期" min-width="120" sortable>
           <template #default="{ row }">
             <el-tag type="info" effect="plain">
               {{ formatDate(row.recordDate) }}
@@ -158,20 +148,12 @@
         </el-table-column>
         <el-table-column prop="exerciseType" label="运动类型" min-width="130">
           <template #default="{ row }">
-            <el-tag
-              :type="getExerciseTypeColor(row.exerciseType)"
-              effect="light"
-            >
+            <el-tag :type="getExerciseTypeColor(row.exerciseType)" effect="light">
               {{ row.exerciseType }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="durationMinutes"
-          label="时长（min）"
-          min-width="120"
-          sortable
-        >
+        <el-table-column prop="durationMinutes" label="时长（min）" min-width="120" sortable>
           <template #default="{ row }">
             <span class="duration-text">{{ row.durationMinutes }} 分钟</span>
           </template>
@@ -183,9 +165,7 @@
           sortable
         >
           <template #default="{ row }">
-            <span class="calories-text"
-              >{{ row.estimatedCaloriesBurned || '-' }} kcal</span
-            >
+            <span class="calories-text">{{ row.estimatedCaloriesBurned || '-' }} kcal</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="160" fixed="right">
@@ -238,13 +218,7 @@
       width="500px"
       class="form-dialog"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-        class="dialog-form"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="dialog-form">
         <el-form-item label="记录日期" prop="recordDate">
           <el-date-picker
             v-model="form.recordDate"
@@ -257,11 +231,7 @@
         </el-form-item>
 
         <el-form-item label="运动类型" prop="exerciseType">
-          <el-select
-            v-model="form.exerciseType"
-            placeholder="选择运动类型"
-            style="width: 100%"
-          >
+          <el-select v-model="form.exerciseType" placeholder="选择运动类型" style="width: 100%">
             <el-option label="跑步" value="跑步" />
             <el-option label="游泳" value="游泳" />
             <el-option label="篮球" value="篮球" />
@@ -299,10 +269,7 @@
         </el-form-item>
 
         <!-- 运动强度提示 -->
-        <div
-          v-if="form.durationMinutes && form.durationMinutes > 0"
-          class="intensity-tip"
-        >
+        <div v-if="form.durationMinutes && form.durationMinutes > 0" class="intensity-tip">
           <el-card class="tip-card">
             <div class="tip-content">
               <span class="tip-label">运动强度:</span>
@@ -316,12 +283,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showDialog = false" size="large">取消</el-button>
-          <el-button
-            type="primary"
-            @click="submitForm"
-            :loading="submitting"
-            size="large"
-          >
+          <el-button type="primary" @click="submitForm" :loading="submitting" size="large">
             <el-icon><Check /></el-icon>
             <span> 确认 </span>
           </el-button>
@@ -381,12 +343,8 @@ const form = reactive({
 })
 
 const rules = {
-  recordDate: [
-    { required: true, message: '请选择记录日期', trigger: 'change' },
-  ],
-  exerciseType: [
-    { required: true, message: '请输入运动类型', trigger: 'blur' },
-  ],
+  recordDate: [{ required: true, message: '请选择记录日期', trigger: 'change' }],
+  exerciseType: [{ required: true, message: '请输入运动类型', trigger: 'blur' }],
   durationMinutes: [
     { required: true, message: '请输入运动时长', trigger: 'blur' },
     {
@@ -401,8 +359,7 @@ const rules = {
 
 const todayStats = computed(() => {
   const totalCalories = todayExerciseList.value.reduce(
-    (sum: number, record: ExerciseRecord) =>
-      sum + (record.estimatedCaloriesBurned || 0),
+    (sum: number, record: ExerciseRecord) => sum + (record.estimatedCaloriesBurned || 0),
     0,
   )
   const totalDuration = todayExerciseList.value.reduce(
@@ -563,8 +520,7 @@ const editRecord = (record: ExerciseRecord) => {
     recordDate: record.recordDate,
     exerciseType: record.exerciseType,
     durationMinutes: record.durationMinutes,
-    estimatedCaloriesBurned:
-      record.estimatedCaloriesBurned || record.caloriesBurned, // 支持两种字段名
+    estimatedCaloriesBurned: record.estimatedCaloriesBurned || record.caloriesBurned, // 支持两种字段名
   })
   showDialog.value = true
 }
@@ -588,8 +544,7 @@ const submitForm = async () => {
 
     if (editingRecord.value) {
       // 使用多种可能的ID字段
-      const recordId =
-        editingRecord.value.exerciseItemID || editingRecord.value.id
+      const recordId = editingRecord.value.exerciseItemID || editingRecord.value.id
       console.log('更新运动记录ID:', recordId) // 添加调试日志
       console.log('更新数据:', formData) // 添加调试日志
 
@@ -624,11 +579,7 @@ const submitForm = async () => {
   } catch (error: unknown) {
     const apiError = error as import('@/types').ApiError
     console.error('提交失败:', apiError)
-    ElMessage.error(
-      apiError.message ||
-        apiError.response?.data?.message ||
-        '操作失败，请重试',
-    )
+    ElMessage.error(apiError.message || apiError.response?.data?.message || '操作失败，请重试')
   } finally {
     submitting.value = false
   }
@@ -844,12 +795,7 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   border-radius: 20px;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1148,11 +1094,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   padding: 30px 0;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.03) 0%,
-    rgba(118, 75, 162, 0.03) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
   border-radius: 0 0 20px 20px;
 }
 
@@ -1319,11 +1261,7 @@ onUnmounted(() => {
 
 :deep(.form-dialog .el-dialog__body) {
   padding: 30px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.95) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
   backdrop-filter: blur(20px);
 }
 
@@ -1466,11 +1404,7 @@ onUnmounted(() => {
 /* 对话框底部按钮美化 */
 :deep(.form-dialog .el-dialog__footer) {
   padding: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   border-top: 1px solid rgba(102, 126, 234, 0.1);
 }
 
@@ -1501,12 +1435,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1545,11 +1474,7 @@ onUnmounted(() => {
 }
 
 .dialog-footer .el-button--primary.is-loading {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.7) 0%,
-    rgba(118, 75, 162, 0.7) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
 }
 
 /* 操作按钮组美化 */
@@ -1587,12 +1512,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1611,11 +1531,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--primary.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.1) 0%,
-    rgba(118, 75, 162, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-color: rgba(102, 126, 234, 0.4);
   color: #667eea;
 }
@@ -1628,11 +1544,7 @@ onUnmounted(() => {
 }
 
 .action-buttons .el-button--danger.is-plain {
-  background: linear-gradient(
-    135deg,
-    rgba(245, 101, 101, 0.1) 0%,
-    rgba(229, 62, 62, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(229, 62, 62, 0.1) 100%);
   border-color: rgba(245, 101, 101, 0.4);
   color: #f56565;
 }
@@ -1652,11 +1564,7 @@ onUnmounted(() => {
 .tip-card {
   border: none;
   border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.05) 0%,
-    rgba(118, 75, 162, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 

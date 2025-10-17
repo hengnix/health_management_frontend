@@ -105,25 +105,17 @@ router.beforeEach((to, _from, next) => {
             const jsonPayload = decodeURIComponent(
               atob(base64)
                 .split('')
-                .map(
-                  (c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2),
-                )
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
                 .join(''),
             )
             const payload = JSON.parse(jsonPayload)
             const userIDFromToken =
-              payload.userId ||
-              payload.userID ||
-              payload.sub ||
-              payload.id ||
-              payload.user_id
+              payload.userId || payload.userID || payload.sub || payload.id || payload.user_id
             if (userIDFromToken) {
               localStorage.setItem('userID', userIDFromToken)
               console.log('UserID recovered successfully:', userIDFromToken)
             } else {
-              console.warn(
-                'Unable to parse userID from token, redirect to login',
-              )
+              console.warn('Unable to parse userID from token, redirect to login')
               next('/login')
               return
             }

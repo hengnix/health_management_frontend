@@ -20,12 +20,8 @@
       <!-- 错误信息 -->
       <div class="error-info">
         <h1 class="error-title">页面走丢了</h1>
-        <p class="error-description">
-          抱歉，您访问的页面不存在或已被移动到其他位置
-        </p>
-        <p class="error-suggestion">
-          请检查 URL 是否正确，或返回首页继续您的健康管理之旅
-        </p>
+        <p class="error-description">抱歉，您访问的页面不存在或已被移动到其他位置</p>
+        <p class="error-suggestion">请检查 URL 是否正确，或返回首页继续您的健康管理之旅</p>
       </div>
 
       <!-- 操作按钮 -->
@@ -39,11 +35,7 @@
           <el-icon><House /></el-icon>
           <span>返回首页</span>
         </el-button>
-        <el-button
-          size="large"
-          @click="goBack"
-          class="action-btn secondary-btn"
-        >
+        <el-button size="large" @click="goBack" class="action-btn secondary-btn">
           <el-icon><ArrowLeft /></el-icon>
           <span>返回上页</span>
         </el-button>
@@ -368,12 +360,7 @@ const goBack = () => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.3s ease;
 }
 

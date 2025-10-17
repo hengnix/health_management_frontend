@@ -47,19 +47,12 @@ export const useUserStore = defineStore('user', () => {
 
           if (payload) {
             const userIDFromToken =
-              payload.userId ||
-              payload.userID ||
-              payload.sub ||
-              payload.id ||
-              payload.user_id
+              payload.userId || payload.userID || payload.sub || payload.id || payload.user_id
 
             if (userIDFromToken) {
               localStorage.setItem('userID', userIDFromToken)
             } else {
-              console.warn(
-                'User ID not found in JWT, available fields:',
-                Object.keys(payload),
-              )
+              console.warn('User ID not found in JWT, available fields:', Object.keys(payload))
             }
           } else {
             console.error('JWT parsing failed')
@@ -157,10 +150,7 @@ export const useUserStore = defineStore('user', () => {
         return false
       }
 
-      console.warn(
-        'Failed to fetch user profile, but keeping login state:',
-        apiError.message,
-      )
+      console.warn('Failed to fetch user profile, but keeping login state:', apiError.message)
       return false
     }
   }
@@ -253,18 +243,12 @@ export const useUserStore = defineStore('user', () => {
             const jsonPayload = decodeURIComponent(
               atob(base64)
                 .split('')
-                .map(
-                  (c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2),
-                )
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
                 .join(''),
             )
             const payload = JSON.parse(jsonPayload)
             const userIDFromToken =
-              payload.userId ||
-              payload.userID ||
-              payload.sub ||
-              payload.id ||
-              payload.user_id
+              payload.userId || payload.userID || payload.sub || payload.id || payload.user_id
             if (userIDFromToken) {
               localStorage.setItem('userID', userIDFromToken)
             }

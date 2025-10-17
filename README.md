@@ -146,19 +146,10 @@ pnpm type-check
 
 ## API 配置
 
-项目通过 Vite 代理配置连接后端服务：
+项目通过环境变量配置后端服务地址，在项目根目录创建 `.env` 文件并写入：
 
-```typescript
-// vite.config.ts
-server: {
-  proxy: {
-    '/api': {
-      target: 'http://<your-backend-server-ip>:8080',
-      changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/api/, ''),
-    },
-  },
-}
+```
+VITE_API_BASE_URL=http(s)://<your-backend-server-ip>:8080
 ```
 
-请将 `<your-backend-server-ip>` 替换为实际的后端服务器地址。
+如果不配置此环境变量，系统将默认使用 `http://localhost:8080` 作为后端地址。

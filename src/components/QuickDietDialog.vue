@@ -8,13 +8,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      class="bg-white/98 p-8"
-    >
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="bg-white/98 p-8">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="记录日期" prop="recordDate">
@@ -82,10 +76,7 @@
       </el-form-item>
 
       <!-- 营养成分预览 -->
-      <div
-        v-if="form.foodName && form.estimatedCalories"
-        class="animate-fade-in-up mt-5"
-      >
+      <div v-if="form.foodName && form.estimatedCalories" class="animate-fade-in-up mt-5">
         <el-card
           class="relative overflow-hidden rounded-2xl border-2 border-emerald-100 bg-gradient-to-br from-emerald-50/30 to-teal-50/30 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
         >
@@ -94,9 +85,7 @@
           ></div>
           <div class="flex flex-col gap-3 p-5">
             <div class="flex items-center justify-between">
-              <span
-                class="flex items-center gap-2 text-base font-bold text-gray-700"
-              >
+              <span class="flex items-center gap-2 text-base font-bold text-gray-700">
                 📊 营养摄入预览
               </span>
               <el-tag :type="getCalorieTagType()" size="small">
@@ -211,9 +200,7 @@ const form = reactive({
 const rules = {
   mealType: [{ required: true, message: '请选择餐次', trigger: 'change' }],
   foodName: [{ required: true, message: '请输入食物名称', trigger: 'blur' }],
-  recordDate: [
-    { required: true, message: '请选择记录日期', trigger: 'change' },
-  ],
+  recordDate: [{ required: true, message: '请选择记录日期', trigger: 'change' }],
   estimatedCalories: [
     { required: true, message: '请输入估计热量', trigger: 'blur' },
     { type: 'number', min: 1, message: '热量必须大于 0', trigger: 'blur' },
@@ -366,17 +353,15 @@ const querySearch = async (
   }
 
   try {
-    const response = await new Promise<{ value: string; calories: number }[]>(
-      (resolve) => {
-        setTimeout(() => {
-          resolve([
-            { value: queryString + '1', calories: 100 },
-            { value: queryString + '2', calories: 200 },
-            { value: queryString + '3', calories: 300 },
-          ])
-        }, 500)
-      },
-    )
+    const response = await new Promise<{ value: string; calories: number }[]>((resolve) => {
+      setTimeout(() => {
+        resolve([
+          { value: queryString + '1', calories: 100 },
+          { value: queryString + '2', calories: 200 },
+          { value: queryString + '3', calories: 300 },
+        ])
+      }, 500)
+    })
     cb(response)
   } catch {
     cb([])

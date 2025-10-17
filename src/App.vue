@@ -22,17 +22,12 @@
               0 0 0 1px rgba(255, 255, 255, 0.05);
           "
         >
-          <div
-            class="header-content flex h-full items-center justify-center px-7"
-          >
+          <div class="header-content flex h-full items-center justify-center px-7">
             <div class="logo-section flex items-center justify-center gap-4">
-              <el-icon
-                class="logo-icon animate-float text-4xl text-white drop-shadow-lg"
+              <el-icon class="logo-icon animate-float text-4xl text-white drop-shadow-lg"
                 ><DataBoard
               /></el-icon>
-              <h2
-                class="text-3xl font-bold tracking-wide text-white drop-shadow-lg"
-              >
+              <h2 class="text-3xl font-bold tracking-wide text-white drop-shadow-lg">
                 健康生活管理系统
               </h2>
             </div>
@@ -105,9 +100,7 @@
                     />
                     <el-icon v-else><User /></el-icon>
                   </el-avatar>
-                  <span class="menu-text">{{
-                    userStore.user?.nickname || '用户'
-                  }}</span>
+                  <span class="menu-text">{{ userStore.user?.nickname || '用户' }}</span>
                 </div>
               </div>
             </div>
@@ -152,9 +145,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const isFullScreenPage = computed(
-  () => route.path === '/login' || route.name === 'NotFound',
-)
+const isFullScreenPage = computed(() => route.path === '/login' || route.name === 'NotFound')
 
 const goToProfile = () => {
   router.push('/profile')
@@ -199,8 +190,8 @@ body {
 
 #app {
   font-family:
-    'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
-    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑',
+    Arial, sans-serif;
   height: 100vh;
   overflow: hidden;
   margin: 0;
@@ -277,12 +268,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: left;
 }
@@ -402,12 +388,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的光效过渡 */
   will-change: left; /* 优化动画性能 */
 }

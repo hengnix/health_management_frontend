@@ -99,21 +99,15 @@
           <div class="calories-average-info">
             <div class="average-item">
               <span class="label">平均摄入:</span>
-              <span class="value green"
-                >{{ averageCaloriesIntake.toFixed(0) }} kcal</span
-              >
+              <span class="value green">{{ averageCaloriesIntake.toFixed(0) }} kcal</span>
             </div>
             <div class="average-item">
               <span class="label">平均消耗:</span>
-              <span class="value red"
-                >{{ averageCaloriesBurn.toFixed(0) }} kcal</span
-              >
+              <span class="value red">{{ averageCaloriesBurn.toFixed(0) }} kcal</span>
             </div>
             <div class="average-item">
               <span class="label">平均净摄入:</span>
-              <span class="value yellow"
-                >{{ averageNetCalories.toFixed(0) }} kcal</span
-              >
+              <span class="value yellow">{{ averageNetCalories.toFixed(0) }} kcal</span>
             </div>
           </div>
           <div class="chart-controls">
@@ -155,9 +149,7 @@
           </h3>
           <div class="average-weight-info">
             平均体重:
-            <span class="average-weight-value"
-              >{{ averageWeightForPeriod.toFixed(1) }} kg</span
-            >
+            <span class="average-weight-value">{{ averageWeightForPeriod.toFixed(1) }} kg</span>
           </div>
           <div class="chart-controls">
             <el-button-group>
@@ -199,15 +191,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  reactive,
-  onMounted,
-  onUnmounted,
-  watch,
-  nextTick,
-  computed,
-} from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import * as echarts from 'echarts'
 import QuickBodyDataDialog from '@/components/QuickBodyDataDialog.vue'
 import QuickDietDialog from '@/components/QuickDietDialog.vue'
@@ -249,27 +233,19 @@ let caloriesChart: echarts.ECharts | null = null
 const weightData = ref<{ date: string; weight: number }[]>([])
 
 // 卡路里数据
-const caloriesData = ref<
-  { date: string; intake: number; burn: number; net: number }[]
->([])
+const caloriesData = ref<{ date: string; intake: number; burn: number; net: number }[]>([])
 
 // 计算当前时间段的平均体重
 const averageWeightForPeriod = computed(() => {
   if (weightData.value.length === 0) return 0
-  const totalWeight = weightData.value.reduce(
-    (sum, item) => sum + item.weight,
-    0,
-  )
+  const totalWeight = weightData.value.reduce((sum, item) => sum + item.weight, 0)
   return totalWeight / weightData.value.length
 })
 
 // 计算当前时间段的平均卡路里
 const averageCaloriesIntake = computed(() => {
   if (caloriesData.value.length === 0) return 0
-  const totalIntake = caloriesData.value.reduce(
-    (sum, item) => sum + item.intake,
-    0,
-  )
+  const totalIntake = caloriesData.value.reduce((sum, item) => sum + item.intake, 0)
   return totalIntake / caloriesData.value.length
 })
 
@@ -623,16 +599,14 @@ const loadWeightData = async () => {
       // 处理数据，按日期分组取最新记录
       const dataMap = new Map<string, number>()
       const timeMap = new Map<string, string>()
-      response.data.rows.forEach(
-        (item: { recordDate: string; weightKG: number }) => {
-          const date = isoToLocalDate(item.recordDate)
-          const existingTime = timeMap.get(date)
-          if (!existingTime || item.recordDate > existingTime) {
-            dataMap.set(date, item.weightKG)
-            timeMap.set(date, item.recordDate)
-          }
-        },
-      )
+      response.data.rows.forEach((item: { recordDate: string; weightKG: number }) => {
+        const date = isoToLocalDate(item.recordDate)
+        const existingTime = timeMap.get(date)
+        if (!existingTime || item.recordDate > existingTime) {
+          dataMap.set(date, item.weightKG)
+          timeMap.set(date, item.recordDate)
+        }
+      })
 
       // 生成连续日期的数据
       const result: { date: string; weight: number }[] = []
@@ -713,24 +687,17 @@ const loadCaloriesData = async () => {
 
     // 处理运动数据
     const exerciseMap = new Map<string, number>()
-    if (
-      exerciseResponse.success &&
-      exerciseResponse.data &&
-      exerciseResponse.data.rows
-    ) {
+    if (exerciseResponse.success && exerciseResponse.data && exerciseResponse.data.rows) {
       exerciseResponse.data.rows
         .filter((item) => {
           // 前端筛选日期范围（因为后端不支持日期筛选）
           const itemDate = isoToLocalDate(item.recordDate)
-          return (
-            itemDate >= dateRange.startDate && itemDate <= dateRange.endDate
-          )
+          return itemDate >= dateRange.startDate && itemDate <= dateRange.endDate
         })
         .forEach((item) => {
           const date = isoToLocalDate(item.recordDate)
           const existing = exerciseMap.get(date) || 0
-          const calories =
-            item.estimatedCaloriesBurned || item.caloriesBurned || 0
+          const calories = item.estimatedCaloriesBurned || item.caloriesBurned || 0
           exerciseMap.set(date, existing + calories)
         })
     }
@@ -792,8 +759,7 @@ const loadHealthGoals = () => {
   if (savedGoals) {
     const parsed = JSON.parse(savedGoals)
     healthGoals.targetWeight = parsed.targetWeight
-    healthGoals.dailyCaloriesIntake =
-      parsed.dailyCaloriesIntake || parsed.dailyCalories // 向后兼容
+    healthGoals.dailyCaloriesIntake = parsed.dailyCaloriesIntake || parsed.dailyCalories // 向后兼容
     healthGoals.dailyCaloriesBurn = parsed.dailyCaloriesBurn
   }
 }
@@ -826,8 +792,7 @@ const refreshData = async () => {
     })
     if (dietResponse.success && dietResponse.data && dietResponse.data.rows) {
       statistics.totalCaloriesConsumed = dietResponse.data.rows.reduce(
-        (sum: number, item) =>
-          sum + (item.estimatedCalories || item.calories || 0),
+        (sum: number, item) => sum + (item.estimatedCalories || item.calories || 0),
         0,
       )
     } else {
@@ -842,19 +807,14 @@ const refreshData = async () => {
       endDate: undefined,
       exerciseType: undefined,
     })
-    if (
-      exerciseResponse.success &&
-      exerciseResponse.data &&
-      exerciseResponse.data.rows
-    ) {
+    if (exerciseResponse.success && exerciseResponse.data && exerciseResponse.data.rows) {
       statistics.totalCaloriesBurned = exerciseResponse.data.rows
         .filter((item) => {
           // 前端筛选今日数据 - 使用本地时区比较
           return isToday(item.recordDate)
         })
         .reduce((sum: number, item) => {
-          const calories =
-            item.estimatedCaloriesBurned || item.caloriesBurned || 0
+          const calories = item.estimatedCaloriesBurned || item.caloriesBurned || 0
           return sum + calories
         }, 0)
     } else {
@@ -1063,12 +1023,7 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   border-radius: 20px;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1548,11 +1503,7 @@ onUnmounted(() => {
 
 :deep(.form-dialog .el-dialog__body) {
   padding: 30px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.95) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
   backdrop-filter: blur(20px);
 }
 
@@ -1699,11 +1650,7 @@ onUnmounted(() => {
 .bmi-card-preview {
   border: none;
   border-radius: 15px;
-  background: linear-gradient(
-    135deg,
-    rgba(138, 43, 226, 0.05) 0%,
-    rgba(147, 112, 219, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.05) 0%, rgba(147, 112, 219, 0.05) 100%);
   box-shadow: 0 4px 15px rgba(138, 43, 226, 0.1);
   overflow: hidden;
   position: relative;
@@ -1746,11 +1693,7 @@ onUnmounted(() => {
 /* 对话框底部按钮美化 */
 :deep(.form-dialog .el-dialog__footer) {
   padding: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(138, 43, 226, 0.05) 0%,
-    rgba(147, 112, 219, 0.05) 100%
-  );
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.05) 0%, rgba(147, 112, 219, 0.05) 100%);
   border-top: 1px solid rgba(138, 43, 226, 0.1);
 }
 
@@ -1781,12 +1724,7 @@ onUnmounted(() => {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transition: left 0.5s ease;
 }
 
@@ -1825,11 +1763,7 @@ onUnmounted(() => {
 }
 
 .dialog-footer .el-button--primary.is-loading {
-  background: linear-gradient(
-    135deg,
-    rgba(138, 43, 226, 0.7) 0%,
-    rgba(147, 112, 219, 0.7) 100%
-  );
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.7) 0%, rgba(147, 112, 219, 0.7) 100%);
 }
 
 /* 响应式优化 */
@@ -1920,11 +1854,7 @@ onUnmounted(() => {
 }
 
 .quick-record-dropdown :deep(.el-dropdown-menu__item:hover) {
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.1) 0%,
-    rgba(118, 75, 162, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   color: #667eea;
   transform: translateX(5px);
 }

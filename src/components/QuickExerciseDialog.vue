@@ -8,13 +8,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      class="bg-white/98 p-8"
-    >
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" class="bg-white/98 p-8">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="记录日期" prop="recordDate">
@@ -112,11 +106,7 @@
 
       <!-- 运动效果预览 -->
       <div
-        v-if="
-          form.exerciseType &&
-          form.durationMinutes &&
-          form.estimatedCaloriesBurned
-        "
+        v-if="form.exerciseType && form.durationMinutes && form.estimatedCaloriesBurned"
         class="mt-5"
       >
         <el-card
@@ -124,9 +114,7 @@
         >
           <div class="p-4">
             <div class="mb-4 flex items-center justify-between">
-              <span class="text-lg font-bold text-gray-700"
-                >🏃‍♂️ 运动效果预览</span
-              >
+              <span class="text-lg font-bold text-gray-700">🏃‍♂️ 运动效果预览</span>
               <el-tag :type="getIntensityTagType()" size="small">
                 {{ getExerciseIntensity() }}
               </el-tag>
@@ -143,9 +131,7 @@
                 <div class="text-xl">⏱️</div>
                 <div>
                   <div class="text-xs text-gray-500">运动时长</div>
-                  <div class="font-semibold">
-                    {{ form.durationMinutes }} 分钟
-                  </div>
+                  <div class="font-semibold">{{ form.durationMinutes }} 分钟</div>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -255,12 +241,8 @@ const form = ref<ExerciseRequest>({
 })
 
 const rules = {
-  exerciseType: [
-    { required: true, message: '请选择或输入运动类型', trigger: 'change' },
-  ],
-  recordDate: [
-    { required: true, message: '请选择记录日期', trigger: 'change' },
-  ],
+  exerciseType: [{ required: true, message: '请选择或输入运动类型', trigger: 'change' }],
+  recordDate: [{ required: true, message: '请选择记录日期', trigger: 'change' }],
   durationMinutes: [
     { required: true, message: '请输入运动时长', trigger: 'blur' },
     {
@@ -341,19 +323,11 @@ const handleExerciseTypeChange = () => {
 
 // 智能计算热量消耗
 const calculateCalories = () => {
-  if (
-    form.value.durationMinutes &&
-    form.value.exerciseType &&
-    form.value.intensity
-  ) {
+  if (form.value.durationMinutes && form.value.exerciseType && form.value.intensity) {
     const baseCalorie =
-      exerciseCalorieMap[
-        form.value.exerciseType as keyof typeof exerciseCalorieMap
-      ] || 8
+      exerciseCalorieMap[form.value.exerciseType as keyof typeof exerciseCalorieMap] || 8
     const multiplier =
-      intensityMultiplier[
-        form.value.intensity as keyof typeof intensityMultiplier
-      ] || 1.0
+      intensityMultiplier[form.value.intensity as keyof typeof intensityMultiplier] || 1.0
 
     form.value.estimatedCaloriesBurned = Math.round(
       baseCalorie * form.value.durationMinutes * multiplier,
@@ -392,11 +366,7 @@ const getExerciseIntensity = () => {
     其他: '中等强度',
   }
 
-  return (
-    typeIntensityMap[
-      form.value.exerciseType as keyof typeof typeIntensityMap
-    ] || '未设置'
-  )
+  return typeIntensityMap[form.value.exerciseType as keyof typeof typeIntensityMap] || '未设置'
 }
 
 // 获取强度标签类型
@@ -411,9 +381,7 @@ const getIntensityTagType = () => {
 // 获取卡路里消耗率
 const getCalorieRate = () => {
   if (form.value.durationMinutes && form.value.estimatedCaloriesBurned) {
-    return (
-      form.value.estimatedCaloriesBurned / form.value.durationMinutes
-    ).toFixed(1)
+    return (form.value.estimatedCaloriesBurned / form.value.durationMinutes).toFixed(1)
   }
   return '0'
 }
@@ -422,8 +390,7 @@ const getCalorieRate = () => {
 const getHealthScore = () => {
   if (form.value.durationMinutes && form.value.estimatedCaloriesBurned) {
     // 假设健康指数 = (消耗热量 / 运动时长) * 10
-    const score =
-      (form.value.estimatedCaloriesBurned / form.value.durationMinutes) * 10
+    const score = (form.value.estimatedCaloriesBurned / form.value.durationMinutes) * 10
     return Math.min(Math.round(score), 100)
   }
   return 0

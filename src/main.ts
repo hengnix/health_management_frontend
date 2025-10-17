@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/app.css'
 
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'

@@ -117,10 +117,7 @@ api.interceptors.response.use(
       // 返回格式化的错误响应而不是直接抛出
       return Promise.resolve({
         success: false,
-        message:
-          errorData.message ||
-          errorData.msg ||
-          `请求失败 (${error.response.status})`,
+        message: errorData.message || errorData.msg || `请求失败 (${error.response.status})`,
         data: null,
         error: errorData,
       })
@@ -189,10 +186,7 @@ const getUserID = (): string | null => {
   }
 
   // 验证 userID 的有效性
-  if (
-    userID &&
-    (userID === 'null' || userID === 'undefined' || userID.trim() === '')
-  ) {
+  if (userID && (userID === 'null' || userID === 'undefined' || userID.trim() === '')) {
     console.warn('getUserID: 检测到无效的 userID，清除缓存')
     localStorage.removeItem('userID')
     userID = null
@@ -205,8 +199,7 @@ const getUserID = (): string | null => {
 // 用户 API
 export const userApi = {
   // 登录，返回的 data 字段直接是 JWT token 字符串
-  login: (data: LoginRequest): Promise<ApiResponse<string>> =>
-    api.post('/users/login', data),
+  login: (data: LoginRequest): Promise<ApiResponse<string>> => api.post('/users/login', data),
 
   // 注册
   register: (data: RegisterRequest): Promise<ApiResponse<{ userID: string }>> =>
@@ -317,9 +310,7 @@ export const bodyDataApi = {
   },
 
   // 添加身体数据
-  create: (
-    data: BodyDataRequest,
-  ): Promise<ApiResponse<{ bodyMetricID: number }>> => {
+  create: (data: BodyDataRequest): Promise<ApiResponse<{ bodyMetricID: number }>> => {
     const userID = getUserID()
 
     if (!userID) {
@@ -333,14 +324,11 @@ export const bodyDataApi = {
   },
 
   // 更新身体数据
-  update: (
-    id: number,
-    data: Partial<BodyDataRequest>,
-  ): Promise<ApiResponse<BodyData>> => api.put(`/bodyMetrics/${id}`, data),
+  update: (id: number, data: Partial<BodyDataRequest>): Promise<ApiResponse<BodyData>> =>
+    api.put(`/bodyMetrics/${id}`, data),
 
   // 删除身体数据
-  delete: (id: number): Promise<ApiResponse<void>> =>
-    api.delete(`/bodyMetrics/${id}`),
+  delete: (id: number): Promise<ApiResponse<void>> => api.delete(`/bodyMetrics/${id}`),
 }
 
 // 饮食记录 API
@@ -386,14 +374,11 @@ export const dietApi = {
   },
 
   // 更新饮食记录
-  update: (
-    id: number,
-    data: Partial<DietRequest>,
-  ): Promise<ApiResponse<DietRecord>> => api.put(`/dietItems/${id}`, data),
+  update: (id: number, data: Partial<DietRequest>): Promise<ApiResponse<DietRecord>> =>
+    api.put(`/dietItems/${id}`, data),
 
   // 删除饮食记录
-  delete: (id: number): Promise<ApiResponse<void>> =>
-    api.delete(`/dietItems/${id}`),
+  delete: (id: number): Promise<ApiResponse<void>> => api.delete(`/dietItems/${id}`),
 }
 
 // 运动记录 API
@@ -419,16 +404,13 @@ export const exerciseApi = {
     if (params?.size) queryParams.append('pageSize', params.size.toString())
     if (params?.startDate) queryParams.append('startDate', params.startDate)
     if (params?.endDate) queryParams.append('endDate', params.endDate)
-    if (params?.exerciseType)
-      queryParams.append('exerciseType', params.exerciseType)
+    if (params?.exerciseType) queryParams.append('exerciseType', params.exerciseType)
 
     return api.get(`/exerciseItems?${queryParams.toString()}`)
   },
 
   // 添加运动记录
-  create: (
-    data: ExerciseRequest,
-  ): Promise<ApiResponse<{ exerciseItemID: number }>> => {
+  create: (data: ExerciseRequest): Promise<ApiResponse<{ exerciseItemID: number }>> => {
     const userID = getUserID()
 
     if (!userID) {
@@ -442,24 +424,17 @@ export const exerciseApi = {
   },
 
   // 更新运动记录
-  update: (
-    id: number,
-    data: Partial<ExerciseRequest>,
-  ): Promise<ApiResponse<ExerciseRecord>> =>
+  update: (id: number, data: Partial<ExerciseRequest>): Promise<ApiResponse<ExerciseRecord>> =>
     api.put(`/exerciseItems/${id}`, data),
 
   // 删除运动记录
-  delete: (id: number): Promise<ApiResponse<void>> =>
-    api.delete(`/exerciseItems/${id}`),
+  delete: (id: number): Promise<ApiResponse<void>> => api.delete(`/exerciseItems/${id}`),
 }
 
 // 统计 API
 export const statisticsApi = {
   // 获取统计数据
-  getStatistics: (
-    startDate?: string,
-    endDate?: string,
-  ): Promise<ApiResponse<Statistics>> => {
+  getStatistics: (startDate?: string, endDate?: string): Promise<ApiResponse<Statistics>> => {
     const params = new URLSearchParams()
     if (startDate) params.append('startDate', startDate)
     if (endDate) params.append('endDate', endDate)
@@ -549,10 +524,7 @@ export const chatApi = {
   },
 
   // 流式聊天接口
-  streamChat: async (
-    msg: string,
-    onChunk: (chunk: string) => void,
-  ): Promise<void> => {
+  streamChat: async (msg: string, onChunk: (chunk: string) => void): Promise<void> => {
     const token = localStorage.getItem('token')
     if (!token) {
       throw new Error('未找到 token')
